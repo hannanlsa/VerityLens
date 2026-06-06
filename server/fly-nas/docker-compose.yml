@@ -1,0 +1,166 @@
+# VerityLens 服务端部署（飞牛 NAS · v0.1.0-alpha）
+#
+# 与 WhisperArchive 共享：PostgreSQL / Redis / Qdrant / Ollama LLM
+# 独立：VerityLens API + 浏览器扩展同步服务
+# 主人决策：共享技术栈 + 共享飞牛 NAS + 留接口 = 后期接服务器 / 卖掉
+
+version: '3.8'
+
+services:
+  # VerityLens API（FastAPI + 跨模态自校验）
+  verity-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: verity-lens-api
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-verity}:${POSTGRES_PASSWORD:-change_me_in_env}@postgres:5432/verity_lens
+      - REDIS_URL=redis://redis:6379/0
+      - QDRANT_URL=http://qdrant:6333
+      - LLM_BASE_URL=http://ollama:11434/v1
+      - LLM_MODEL=qwen2.5:7b
+      - LLM_API_KEY=${LLM_API_KEY:-}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - PAT_POOL_FILE=/data/patent_pool.json
+    volumes:
+      - verity_data:/data
+      - verity_logs:/var/log/verity-lens
+    ports:
+      - "127.0.0.1:8001:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+      ollama:
+        condition: service_started
+    networks:
+      - verity-net
+
+  # Celery Worker（异步任务：跨模态验证、LLM 调用、置信度评分）
+  verity-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: verity-lens-worker
+    restart: unless-stopped
+    command: celery -A app.tasks worker --loglevel=INFO --concurrency=2
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-verity}:${POSTGRES_PASSWORD:-change_me_in_env}@postgres:5432/verity_lens
+      - REDIS_URL=redis://redis:6379/0
+      - QDRANT_URL=http://qdrant:6333
+      - LLM_BASE_URL=http://ollama:11434/v1
+      - LLM_MODEL=qwen2.5:7b
+    volumes:
+      - verity_data:/data
+    depends_on:
+      - postgres
+      - redis
+      - qdrant
+      - ollama
+    networks:
+      - verity-net
+
+  # PostgreSQL（与 WhisperArchive 共享实例或独立）
+  postgres:
+    image: postgres:16-alpine
+    container_name: verity-lens-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: verity_lens
+      POSTGRES_USER: ${POSTGRES_USER:-verity}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me_in_env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5433:5432"  # 不同端口避免与 WhisperArchive 冲突
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-verity}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - verity-net
+
+  # Redis
+  redis:
+    image: redis:8.0-alpine
+    container_name: verity-lens-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "127.0.0.1:6380:6379"  # 不同端口
+    networks:
+      - verity-net
+
+  # Qdrant 向量库（搜索结果 embedding + 跨模态特征）
+  qdrant:
+    image: qdrant/qdrant:v1.18.0
+    container_name: verity-lens-qdrant
+    restart: unless-stopped
+    volumes:
+      - qdrant_data:/qdrant/storage
+    ports:
+      - "127.0.0.1:6334:6333"  # 不同端口
+    networks:
+      - verity-net
+
+  # Ollama + Qwen2.5-7B（与 WhisperArchive 共享 LLM）
+  ollama:
+    image: ollama/ollama:latest
+    container_name: verity-lens-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "127.0.0.1:11435:11434"  # 不同端口
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - verity-net
+
+  # 共享专利池同步服务（5 件专利）
+  patent-sync:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: verity-lens-patent-sync
+    restart: unless-stopped
+    command: python -m app.patent_sync
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-verity}:${POSTGRES_PASSWORD:-change_me_in_env}@postgres:5432/verity_lens
+    volumes:
+      - verity_data:/data
+    networks:
+      - verity-net
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  qdrant_data:
+    driver: local
+  verity_data:
+    driver: local
+  verity_logs:
+    driver: local
+  ollama_data:
+    driver: local
+
+networks:
+  verity-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
