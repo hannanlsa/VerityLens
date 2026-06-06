@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VerityLens</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🛡️ VerityLens</h1>
+      <p class="subtitle">真实透镜 · 反虚假信息助手</p>
+    </header>
+
+    <section class="status">
+      <div class="status-row">
+        <span class="label">状态：</span>
+        <span id="status" class="value">运行中</span>
+      </div>
+      <div class="status-row">
+        <span class="label">置信度阈值：</span>
+        <input type="range" id="threshold" min="0" max="100" value="65">
+        <span id="threshold-value">65%</span>
+      </div>
+    </section>
+
+    <section class="stats">
+      <h2>本次会话</h2>
+      <div class="stat-row">
+        <span>已验证：</span>
+        <span id="verified-count">0</span>
+      </div>
+      <div class="stat-row">
+        <span>高置信：</span>
+        <span id="high-count" class="green">0</span>
+      </div>
+      <div class="stat-row">
+        <span>低置信：</span>
+        <span id="low-count" class="red">0</span>
+      </div>
+    </section>
+
+    <footer>
+      <button id="settings">设置</button>
+      <button id="about">关于</button>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
