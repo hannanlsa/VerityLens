@@ -1,22 +1,24 @@
 /**
- * VerityLens · Edge/Chrome Service Worker (MV3)
+ * VerityLens · Edge/Chrome Service Worker (MV3) · v0.2.0
  *
- * Edge 和 Chrome 共享 MV3 service worker 规范
+ * 双通道智能路由：本地 + 云端LLM + Docker
  */
 
-// 首次安装
 chrome.runtime.onInstalled.addListener((details) => {
   console.log('[VerityLens] Installed:', details.reason);
   if (details.reason === 'install') {
     chrome.storage.local.set({
       firstInstall: Date.now(),
       enabled: true,
-      confidenceThreshold: 0.65
+      confidenceThreshold: 0.65,
+      channelMode: 'smart',
+      complexityThreshold: 3
     });
+
+    chrome.tabs.create({ url: chrome.runtime.getURL('welcome/welcome.html') });
   }
 });
 
-// 右键菜单
 chrome.contextMenus.create({
   id: 'verity-check',
   title: 'VerityLens · 真实性验证',
@@ -38,6 +40,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.storage.local.get('confidenceThreshold').then((data) => {
       sendResponse({ threshold: data.confidenceThreshold || 0.65 });
     });
+    return true;
+  }
+
+  if (message.type === 'UPDATE_STATS') {
+    chrome.storage.local.get(['verifiedCount', 'highCount', 'lowCount'], (data) => {
+      chrome.storage.local.set({
+        verifiedCount: (data.verifiedCount || 0) + (message.verified || 0),
+        highCount: (data.highCount || 0) + (message.high || 0),
+        lowCount: (data.lowCount || 0) + (message.low || 0)
+      });
+    });
+    sendResponse({ ok: true });
     return true;
   }
 });

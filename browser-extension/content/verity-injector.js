@@ -1,16 +1,9 @@
 /**
- * VerityLens · Content Script · 搜索结果真实性标注
+ * VerityLens · Content Script · 搜索结果真实性标注（v0.2.0）
  *
- * 主人决策：颜色标注 + 真实性评分
- * - 绿 = 真实（官方 / 学术 / 可信）
- * - 黄 = 中性（个人博客 / 中等可信）
- * - 红 = 广告 / SEO 农场 / 软文
- *
- * 工作流：
- * 1. 检测当前页面（百度 / 360 / 搜狗 / Google / Bing / DDG）
- * 2. 解析搜索结果 DOM
- * 3. 对每条结果调 VerityCore.crossValidate
- * 4. 注入颜色标签 + hover popup
+ * 双通道智能路由：
+ * - 轻量任务 → 本地启发式评分
+ * - 复杂任务 → 云端 LLM / Docker Ollama
  *
  * 静默原则：DOM 注入不抓取不复制 = 不违反平台协议
  */
@@ -18,7 +11,6 @@
 (function() {
   'use strict';
 
-  // 防止重复注入
   if (window.__verityLensInjected) return;
   window.__verityLensInjected = true;
 
@@ -27,9 +19,6 @@
 
   console.log('[VerityLens] 检测到平台:', PLATFORM);
 
-  /**
-   * 检测当前搜索引擎
-   */
   function detectPlatform() {
     if (/baidu\.com$/.test(HOST)) return 'baidu';
     if (/so\.com$/.test(HOST)) return '360';
@@ -40,10 +29,6 @@
     return 'unknown';
   }
 
-  /**
-   * 平台特定的结果选择器
-   * 各家 DOM 结构不同，需要针对性处理
-   */
   const PLATFORM_SELECTORS = {
     baidu: {
       container: '.result',
@@ -77,10 +62,7 @@
     }
   };
 
-  /**
-   * 主流程：扫描 + 标注
-   */
-  function scanAndAnnotate() {
+  async function scanAndAnnotate() {
     const selector = PLATFORM_SELECTORS[PLATFORM];
     if (!selector) {
       console.warn('[VerityLens] 不支持的平台:', PLATFORM);
@@ -90,10 +72,10 @@
     const results = document.querySelectorAll(selector.container);
     console.log(`[VerityLens] 发现 ${results.length} 条结果`);
 
-    results.forEach((result, idx) => {
-      // 跳过已标注的
+    const promises = [];
+    results.forEach((result) => {
       if (result.dataset.verityAnnotated) return;
-      result.dataset.verityAnnotated = 'true';
+      result.dataset.verityAnnotated = 'pending';
 
       const titleEl = result.querySelector(selector.title);
       const snippetEl = result.querySelector(selector.snippet);
@@ -103,21 +85,41 @@
         snippetEl?.textContent || ''
       ].join('\n').trim();
 
-      if (!textContent) return;
+      if (!textContent) {
+        result.dataset.verityAnnotated = 'skipped';
+        return;
+      }
 
-      // 调用 VerityCore
-      const result_data = VerityCore.crossValidate(null, null, textContent);
-      annotateResult(result, result_data);
+      const href = titleEl?.href || '';
+
+      promises.push(
+        Channel.verify(textContent, {
+          resultCount: results.length,
+          hasMedia: !!result.querySelector('video, audio, iframe'),
+          href
+        }).then((resultData) => {
+          result.dataset.verityAnnotated = 'true';
+          annotateResult(result, resultData);
+        }).catch((err) => {
+          console.warn('[VerityLens] 验证失败:', err);
+          result.dataset.verityAnnotated = 'error';
+        })
+      );
     });
+
+    await Promise.allSettled(promises);
+    updateStats();
   }
 
-  /**
-   * 标注单条结果
-   */
-  function annotateResult(element, { confidence, score, reasons }) {
-    const color = VerityCore.COLORS[confidence] || VerityCore.COLORS[VerityCore.CONFIDENCE.UNVERIFIED];
+  function annotateResult(element, { confidence, score, reasons, channel, model }) {
+    const color = VerityCore.COLORS[confidence] || VerityCore.COLORS.unverified;
+    const label = VerityCore.CONFIDENCE_LABEL[confidence] || '未验证';
 
-    // 1. 左侧色条
+    const existingRibbon = element.querySelector('.verity-ribbon');
+    const existingPopup = element.querySelector('.verity-popup');
+    if (existingRibbon) existingRibbon.remove();
+    if (existingPopup) existingPopup.remove();
+
     const ribbon = document.createElement('div');
     ribbon.className = 'verity-ribbon';
     ribbon.style.cssText = `
@@ -128,12 +130,15 @@
       width: 4px;
       background: ${color};
       border-radius: 2px;
+      transition: width 0.2s;
     `;
     element.style.position = 'relative';
     element.style.paddingLeft = '12px';
     element.insertBefore(ribbon, element.firstChild);
 
-    // 2. Hover popup
+    const channelLabel = channel === 'cloud' ? `☁️ ${model || 'LLM'}` :
+                         channel === 'docker' ? '🐳 本地Docker' : '🔒 本地';
+
     const popup = document.createElement('div');
     popup.className = 'verity-popup';
     popup.style.cssText = `
@@ -144,38 +149,61 @@
       z-index: 999999;
       background: #1f2937;
       color: #f9fafb;
-      padding: 8px 12px;
-      border-radius: 6px;
+      padding: 10px 14px;
+      border-radius: 8px;
       font-size: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      max-width: 320px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      max-width: 360px;
+      line-height: 1.5;
     `;
     popup.innerHTML = `
-      <div style="font-weight:bold;margin-bottom:4px;color:${color}">
-        真实性评分: ${(score * 100).toFixed(0)}% (${confidence})
+      <div style="font-weight:bold;margin-bottom:6px;color:${color};font-size:13px">
+        真实性: ${label} ${(score * 100).toFixed(0)}%
       </div>
-      <div style="font-size:11px;opacity:0.9">
-        ${reasons.map(r => `<div>${r}</div>`).join('')}
+      <div style="font-size:11px;opacity:0.85;margin-bottom:6px">
+        ${reasons.map(r => `<div style="margin:2px 0">${r}</div>`).join('')}
+      </div>
+      <div style="font-size:10px;opacity:0.6;border-top:1px solid #4b5563;padding-top:4px">
+        ${channelLabel} · VerityLens v${VerityCore.VERSION}
       </div>
     `;
     element.appendChild(popup);
 
     element.addEventListener('mouseenter', () => {
       popup.style.display = 'block';
+      ribbon.style.width = '6px';
     });
     element.addEventListener('mouseleave', () => {
       popup.style.display = 'none';
+      ribbon.style.width = '4px';
     });
   }
 
-  // 启动
+  function updateStats() {
+    const annotated = document.querySelectorAll('[data-verity-annotated="true"]');
+    let high = 0, low = 0;
+    annotated.forEach(el => {
+      const ribbon = el.querySelector('.verity-ribbon');
+      if (!ribbon) return;
+      const bg = ribbon.style.background;
+      if (bg === '#22c55e') high++;
+      if (bg === '#ef4444' || bg === '#f97316') low++;
+    });
+
+    chrome.runtime.sendMessage({
+      type: 'UPDATE_STATS',
+      verified: annotated.length,
+      high,
+      low
+    }).catch(() => {});
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', scanAndAnnotate);
   } else {
     scanAndAnnotate();
   }
 
-  // 监听 DOM 变化（搜索结果分页 / 无限滚动）
   const observer = new MutationObserver(() => {
     clearTimeout(window.__verityLensDebounce);
     window.__verityLensDebounce = setTimeout(scanAndAnnotate, 500);

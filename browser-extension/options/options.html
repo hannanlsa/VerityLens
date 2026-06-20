@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VerityLens 设置</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🛡️ VerityLens 设置</h1>
+      <p class="subtitle">真实透镜 · 反虚假信息助手</p>
+    </header>
+
+    <section class="card">
+      <h2>验证通道</h2>
+      <div class="radio-group">
+        <label class="radio-item">
+          <input type="radio" name="channelMode" value="local">
+          <div class="radio-content">
+            <span class="radio-title">🔒 纯本地</span>
+            <span class="radio-desc">零隐私风险，评分精度较低</span>
+          </div>
+        </label>
+        <label class="radio-item">
+          <input type="radio" name="channelMode" value="smart" checked>
+          <div class="radio-content">
+            <span class="radio-title">⚡ 智能切换（推荐）</span>
+            <span class="radio-desc">轻量→本地，复杂→云端，自动选最快</span>
+          </div>
+        </label>
+        <label class="radio-item">
+          <input type="radio" name="channelMode" value="cloud">
+          <div class="radio-content">
+            <span class="radio-title">☁️ 仅云端</span>
+            <span class="radio-desc">所有验证走LLM，需配置API</span>
+          </div>
+        </label>
+        <label class="radio-item">
+          <input type="radio" name="channelMode" value="docker">
+          <div class="radio-content">
+            <span class="radio-title">🐳 仅本地Docker</span>
+            <span class="radio-desc">自建Ollama，完全私有</span>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>☁️ 云端模型</h2>
+      <div class="form-group">
+        <label>提供商</label>
+        <select id="apiProvider">
+          <option value="">-- 选择提供商 --</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>模型</label>
+        <select id="apiModel">
+          <option value="">-- 先选择提供商 --</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>API Key</label>
+        <div class="input-with-btn">
+          <input type="password" id="apiKey" placeholder="sk-...">
+          <button id="toggleKey" class="btn-small">👁️</button>
+        </div>
+      </div>
+      <div class="form-group" id="signupHint" style="display:none">
+        <div class="hint-box">
+          <span id="freeLabel">🆓</span>
+          <span id="freeText"></span>
+          <a id="signupLink" href="#" target="_blank" class="link">去注册 →</a>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button id="testCloud" class="btn-primary">测试连接</button>
+        <span id="cloudStatus" class="status-text"></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>🆓 免费模型推荐</h2>
+      <div id="freeModelList" class="free-model-list"></div>
+    </section>
+
+    <section class="card">
+      <h2>🐳 本地 Docker（可选）</h2>
+      <div class="form-group">
+        <label>地址</label>
+        <input type="text" id="dockerUrl" placeholder="http://192.168.1.100:61593">
+      </div>
+      <div class="form-group">
+        <label>模型（Ollama）</label>
+        <input type="text" id="dockerModel" placeholder="qwen2.5:7b" value="qwen2.5:7b">
+      </div>
+      <div class="form-actions">
+        <button id="testDocker" class="btn-primary">测试连接</button>
+        <span id="dockerStatus" class="status-text"></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>智能切换阈值</h2>
+      <div class="form-group">
+        <label>复杂度评分 ≥ <span id="thresholdValue">3</span> 时走云端</label>
+        <input type="range" id="complexityThreshold" min="1" max="8" value="3">
+      </div>
+      <div class="threshold-hint">
+        <span>1=全部走云端</span>
+        <span>8=几乎全走本地</span>
+      </div>
+    </section>
+
+    <section class="card privacy-notice">
+      <h2>⚠️ 隐私提示</h2>
+      <p>云端模式下，搜索结果文本将发送至所选API提供商。本地模式和Docker模式无此风险。</p>
+      <p>API Key 仅存储在浏览器本地，VerityLens 不收集任何数据。</p>
+    </section>
+
+    <footer>
+      <button id="save" class="btn-primary btn-large">💾 保存设置</button>
+      <span id="saveStatus" class="status-text"></span>
+    </footer>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>

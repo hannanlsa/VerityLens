@@ -1,7 +1,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  width: 280px;
+  width: 300px;
   background: #1f2937;
   color: #f9fafb;
   padding: 16px;
@@ -10,14 +10,27 @@ header { text-align: center; margin-bottom: 16px; }
 h1 { font-size: 20px; color: #22c55e; }
 .subtitle { font-size: 11px; opacity: 0.7; margin-top: 4px; }
 .status, .stats { background: #374151; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
-.status-row, .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 12px; }
-input[type=range] { flex: 1; margin: 0 8px; }
-.green { color: #22c55e; font-weight: bold; }
-.red { color: #ef4444; font-weight: bold; }
+.status-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 12px; }
+.status-row .label { color: #9ca3af; }
+.status-row .value { font-weight: 600; }
+input[type=range] { flex: 1; margin: 0 8px; accent-color: #22c55e; }
+h2 { font-size: 12px; color: #9ca3af; margin-bottom: 8px; }
+.stat-grid { display: flex; gap: 8px; }
+.stat-item {
+  flex: 1;
+  text-align: center;
+  padding: 8px 4px;
+  background: #4b5563;
+  border-radius: 6px;
+}
+.stat-num { display: block; font-size: 18px; font-weight: 700; }
+.stat-label { display: block; font-size: 10px; opacity: 0.7; margin-top: 2px; }
+.green .stat-num { color: #22c55e; }
+.red .stat-num { color: #ef4444; }
 footer { display: flex; gap: 8px; }
 button {
   flex: 1;
-  padding: 6px 12px;
+  padding: 8px 12px;
   background: #4b5563;
   color: white;
   border: none;

@@ -1,23 +1,24 @@
 /**
- * VerityLens · Firefox Background Script (MV2)
+ * VerityLens · Firefox Background Script (MV2) · v0.2.0
  *
- * Firefox MV2 使用 scripts 数组而非 MV3 service_worker
- * 同样实现：右键菜单 + 标签页变化 + 跨域消息
+ * 双通道智能路由：本地 + 云端LLM + Docker
  */
 
-// 首次安装
 browser.runtime.onInstalled.addListener((details) => {
   console.log('[VerityLens] Installed:', details.reason);
   if (details.reason === 'install') {
     browser.storage.local.set({
       firstInstall: Date.now(),
       enabled: true,
-      confidenceThreshold: 0.65
+      confidenceThreshold: 0.65,
+      channelMode: 'smart',
+      complexityThreshold: 3
     });
+
+    browser.tabs.create({ url: browser.runtime.getURL('welcome/welcome.html') });
   }
 });
 
-// 右键菜单
 browser.contextMenus.create({
   id: 'verity-check',
   title: 'VerityLens · 真实性验证',
@@ -34,12 +35,23 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
   }
 });
 
-// 跨域消息
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'GET_CONFIDENCE') {
     browser.storage.local.get('confidenceThreshold').then((data) => {
       sendResponse({ threshold: data.confidenceThreshold || 0.65 });
     });
-    return true;  // 异步响应
+    return true;
+  }
+
+  if (message.type === 'UPDATE_STATS') {
+    browser.storage.local.get(['verifiedCount', 'highCount', 'lowCount'], (data) => {
+      browser.storage.local.set({
+        verifiedCount: (data.verifiedCount || 0) + (message.verified || 0),
+        highCount: (data.highCount || 0) + (message.high || 0),
+        lowCount: (data.lowCount || 0) + (message.low || 0)
+      });
+    });
+    sendResponse({ ok: true });
+    return true;
   }
 });

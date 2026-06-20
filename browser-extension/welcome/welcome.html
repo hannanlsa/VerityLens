@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>欢迎使用 VerityLens</title>
+  <link rel="stylesheet" href="welcome.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">🛡️</div>
+      <h1>欢迎使用 VerityLens</h1>
+      <p class="subtitle">真实透镜 · 帮你在搜索结果中识别广告/SEO/真实内容</p>
+    </header>
+
+    <section class="option-card recommended" id="optFree">
+      <div class="card-badge">推荐</div>
+      <div class="card-icon">🆓</div>
+      <h2>免费快速开始</h2>
+      <p>使用智谱GLM-4-Flash，<strong>永久免费</strong>，无需付费</p>
+      <div class="card-actions">
+        <button id="btnFreeSignup" class="btn-primary">一键注册 →</button>
+        <button id="btnFreeHas" class="btn-secondary">我有Key →</button>
+      </div>
+    </section>
+
+    <section class="option-card" id="optLocal">
+      <div class="card-icon">🔒</div>
+      <h2>纯本地模式</h2>
+      <p>无需任何API，零隐私风险。评分精度较低，仅基于关键词规则。</p>
+      <button id="btnLocal" class="btn-secondary">直接使用 →</button>
+    </section>
+
+    <section class="option-card" id="optDocker">
+      <div class="card-icon">🐳</div>
+      <h2>自建 Docker</h2>
+      <p>本地 Ollama 推理，完全私有。需要 GPU 和 Docker 环境。</p>
+      <button id="btnDocker" class="btn-secondary">配置 →</button>
+    </section>
+
+    <div id="keyForm" class="key-form" style="display:none">
+      <h3>输入 API Key</h3>
+      <div class="form-group">
+        <label>提供商</label>
+        <select id="welcomeProvider"></select>
+      </div>
+      <div class="form-group">
+        <label>模型</label>
+        <select id="welcomeModel"></select>
+      </div>
+      <div class="form-group">
+        <label>API Key</label>
+        <input type="text" id="welcomeKey" placeholder="sk-...">
+      </div>
+      <div class="form-actions">
+        <button id="btnConfirmKey" class="btn-primary">确认并开始使用</button>
+        <button id="btnCancelKey" class="btn-secondary">取消</button>
+      </div>
+    </div>
+
+    <footer>
+      <p class="footer-hint">你可以随时在插件设置中更改这些选项</p>
+    </footer>
+  </div>
+  <script src="welcome.js"></script>
+</body>
+</html>

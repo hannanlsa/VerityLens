@@ -15,11 +15,15 @@
 
     <section class="status">
       <div class="status-row">
-        <span class="label">状态：</span>
-        <span id="status" class="value">运行中</span>
+        <span class="label">通道</span>
+        <span id="channelMode" class="value">智能切换</span>
       </div>
       <div class="status-row">
-        <span class="label">置信度阈值：</span>
+        <span class="label">模型</span>
+        <span id="currentModel" class="value">本地</span>
+      </div>
+      <div class="status-row">
+        <span class="label">置信度阈值</span>
         <input type="range" id="threshold" min="0" max="100" value="65">
         <span id="threshold-value">65%</span>
       </div>
@@ -27,23 +31,25 @@
 
     <section class="stats">
       <h2>本次会话</h2>
-      <div class="stat-row">
-        <span>已验证：</span>
-        <span id="verified-count">0</span>
-      </div>
-      <div class="stat-row">
-        <span>高置信：</span>
-        <span id="high-count" class="green">0</span>
-      </div>
-      <div class="stat-row">
-        <span>低置信：</span>
-        <span id="low-count" class="red">0</span>
+      <div class="stat-grid">
+        <div class="stat-item">
+          <span class="stat-num" id="verified-count">0</span>
+          <span class="stat-label">已验证</span>
+        </div>
+        <div class="stat-item green">
+          <span class="stat-num" id="high-count">0</span>
+          <span class="stat-label">高置信</span>
+        </div>
+        <div class="stat-item red">
+          <span class="stat-num" id="low-count">0</span>
+          <span class="stat-label">低置信</span>
+        </div>
       </div>
     </section>
 
     <footer>
-      <button id="settings">设置</button>
-      <button id="about">关于</button>
+      <button id="settings">⚙️ 设置</button>
+      <button id="about">ℹ️ 关于</button>
     </footer>
   </div>
   <script src="popup.js"></script>
