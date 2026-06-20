@@ -1,17 +1,18 @@
 /**
- * VerityLens · Cross-Modal Verifier Core（v0.2.0）
+ * VerityLens · Cross-Modal Verifier Core（v0.3.0）
  *
- * 双通道智能路由架构：
- * - 本地通道：关键词匹配 + 正则规则 + Tesseract.js OCR + WebSpeech ASR
+ * 双通道智能路由 + 跨模态自校验：
+ * - 本地通道：关键词匹配 + 正则规则 + Tesseract.js OCR + WebSpeech ASR + 三元组交叉验证
  * - 云端通道：DeepSeek / 智谱GLM / 通义千问 / 硅基流动 / Groq 等（用户自填Key）
  * - Docker通道：用户自建 Ollama（OpenAI兼容接口）
  * - 智能路由：轻量→本地，复杂→云端，自动选最快可用模型
+ * - 跨模态：ASR + OCR + 文本三元组交叉验证（专利 1.1）
  *
  * 5 级置信度（high / medium / abnormal / partial_X / unverified）
  */
 
 const VerityCore = {
-  VERSION: '0.2.0',
+  VERSION: '0.3.0',
   DEBUG: false,
 
   CONFIDENCE: {
@@ -51,16 +52,26 @@ const VerityCore = {
 
   async transcribeAudio(audioBlob) {
     this.log('ASR transcribeAudio', audioBlob);
+    if (typeof VerityASR !== 'undefined') {
+      return VerityASR.transcribeAudio(audioBlob);
+    }
     return { text: '', confidence: 0, language: 'zh-CN', duration: 0 };
   },
 
   async recognizeText(imageBlob) {
     this.log('OCR recognizeText', imageBlob);
+    if (typeof VerityOCR !== 'undefined') {
+      return VerityOCR.recognize(imageBlob);
+    }
     return { text: '', confidence: 0, blocks: [] };
   },
 
   async crossValidate(asrResult, ocrResult, textContent) {
     this.log('crossValidate', { asrResult, ocrResult, textContent });
+
+    if (typeof CrossModalVerifier !== 'undefined' && (asrResult?.text || ocrResult?.text)) {
+      return CrossModalVerifier.verify(textContent, asrResult, ocrResult);
+    }
 
     const reasons = [];
     let score = 0;
@@ -362,6 +373,7 @@ const Channel = {
 2. 是否来自可信来源（官方/学术/权威）
 3. 是否存在SEO农场/软文特征
 4. 内容质量与信息密度
+5. 跨模态一致性（如有OCR/ASR辅助信息）
 
 返回严格JSON格式：
 {"confidence":"high|medium|abnormal|partial_X|unverified","score":0.0-1.0,"reasons":["原因1","原因2"]}

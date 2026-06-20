@@ -1,9 +1,10 @@
 /**
- * VerityLens · Content Script · 搜索结果真实性标注（v0.2.0）
+ * VerityLens · Content Script · 搜索结果真实性标注（v0.3.0）
  *
- * 双通道智能路由：
+ * 双通道智能路由 + 跨模态自校验：
  * - 轻量任务 → 本地启发式评分
  * - 复杂任务 → 云端 LLM / Docker Ollama
+ * - 含音视频 → 跨模态验证（ASR + OCR + 文本三元组）
  *
  * 静默原则：DOM 注入不抓取不复制 = 不违反平台协议
  */
@@ -91,13 +92,31 @@
       }
 
       const href = titleEl?.href || '';
+      const hasMedia = !!result.querySelector('video, audio, iframe');
+      const hasImage = !!result.querySelector('img[src]');
+
+      let ocrResult = null;
+      if (hasImage && typeof VerityOCR !== 'undefined') {
+        const imgEl = result.querySelector('img[src]');
+        if (imgEl) {
+          try {
+            ocrResult = await VerityOCR.recognize(imgEl.src);
+          } catch {}
+        }
+      }
 
       promises.push(
         Channel.verify(textContent, {
           resultCount: results.length,
-          hasMedia: !!result.querySelector('video, audio, iframe'),
-          href
+          hasMedia,
+          hasImage,
+          crossModal: !!ocrResult?.text,
+          href,
+          ocrResult
         }).then((resultData) => {
+          if (ocrResult?.text && resultData.channel === 'local') {
+            resultData = VerityCore.crossValidate(null, ocrResult, textContent);
+          }
           result.dataset.verityAnnotated = 'true';
           annotateResult(result, resultData);
         }).catch((err) => {

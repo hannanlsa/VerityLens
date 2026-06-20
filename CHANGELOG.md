@@ -5,6 +5,54 @@ All notable changes to **VerityLens** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-06-20
+
+### ⚠️ PATENT PENDING
+
+> This release contains patent-pending technology (shared with WhisperArchive).
+> Unauthorized reproduction, distribution, or public disclosure is prohibited.
+
+### Added
+
+#### Cross-Modal Verification Core (Patent 1.1)
+- **New**: `common/modules/cross-modal.js` — CrossModalVerifier with entity extraction + linking
+  - 7 entity types: URL, email, phone, date, number, org, person
+  - Cross-modal entity linking (exact match)
+  - Weighted scoring: entity link score × 0.6 + text match × 0.4
+  - ASR-OCR cross-consistency bonus
+  - Unified timeline tracking
+- **New**: `common/modules/ocr.js` — VerityOCR (Tesseract.js WASM)
+  - Chinese + English mixed recognition
+  - Element capture via canvas
+  - Confidence scoring per block
+- **New**: `common/modules/asr.js` — VerityASR (Web Speech API)
+  - Real-time speech-to-text
+  - Audio file transcription
+  - Continuous recognition with auto-restart
+
+#### Tampermonkey Userscript
+- **New**: `userscript/verity-lens.user.js` — Full-featured userscript version
+  - Same 6 search engines support
+  - Same color annotation + hover popup
+  - GM_xmlhttpRequest for cloud API calls
+  - Menu commands: set API key, switch modes
+  - Zero dependency, standalone operation
+
+#### Content Script Enhancement
+- **Updated**: `verity-injector.js` — Auto OCR on search result images
+  - Detects `<img>` in results, runs Tesseract.js OCR
+  - Passes OCR result to cross-modal verifier
+  - Falls back gracefully if OCR unavailable
+
+### Changed
+- `verity-core.js` — v0.2.0 → v0.3.0
+  - `crossValidate()` now delegates to CrossModalVerifier when available
+  - `transcribeAudio()` delegates to VerityASR
+  - `recognizeText()` delegates to VerityOCR
+- `manifest.json` — v0.2.0 → v0.3.0
+  - Added `common/modules/*.js` to content_scripts and web_accessible_resources
+- `service-worker.js` / `background.js` — Version bump to v0.3.0
+
 ## [0.2.0] - 2026-06-20
 
 ### ⚠️ PATENT PENDING

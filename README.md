@@ -4,7 +4,7 @@
 > A cross-modal fact-checking assistant for the post-truth era.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
-[![Status: v0.2.0](https://img.shields.io/badge/Status-v0.2.0-green)](CHANGELOG.md)
+[![Status: v0.3.0](https://img.shields.io/badge/Status-v0.3.0-green)](CHANGELOG.md)
 [![Patent: Pending](https://img.shields.io/badge/Patent-Pending-red)](PATENT_PENDING.md)
 
 ## ✨ 项目定位
@@ -85,19 +85,24 @@ verity-lens/
 ├── browser-extension/        # 浏览器插件（主力形态）
 │   ├── background/           # Service Worker (MV3) + Background (MV2)
 │   ├── common/
-│   │   └── verity-core.js    # 核心引擎 + 模型注册表 + 智能路由 + 统一通道
+│   │   ├── verity-core.js    # 核心引擎 + 模型注册表 + 智能路由 + 统一通道
+│   │   └── modules/          # 跨模态模块
+│   │       ├── asr.js        # Web Speech ASR
+│   │       ├── ocr.js        # Tesseract.js OCR
+│   │       └── cross-modal.js # 三元组交叉验证 + 实体链接 + 统一时间轴
 │   ├── content/
-│   │   └── verity-injector.js # 搜索结果标注注入
+│   │   └── verity-injector.js # 搜索结果标注注入（含图片OCR）
 │   ├── options/              # 设置页（模型选择器 + 免费模型引导）
 │   ├── popup/                # 弹出面板
 │   ├── welcome/              # 首次安装引导
 │   └── manifest.json
+├── userscript/               # 油猴脚本（独立运行）
+│   └── verity-lens.user.js
 ├── server/                   # Docker 部署（可选）
 │   └── fly-nas/
 │       └── docker-compose.yml # 精简版 2 服务（FastAPI + Ollama）
-├── docs/
-│   └── legal/                # 法律风险评估
-└── userscript/               # 油猴脚本（计划）
+└── docs/
+    └── legal/                # 法律风险评估
 ```
 
 ## 🔧 技术栈
@@ -132,13 +137,21 @@ VerityLens 与 WhisperArchive 共享 **5 件专利**：
 | 仓库名 | hannanlsa/VerityLens |
 | 可见性 | 🔒 PRIVATE（暂未公开） |
 | 协议 | AGPL-3.0 |
-| 状态 | v0.2.0（双通道智能路由） |
+| 状态 | v0.3.0（跨模态自校验 + 油猴脚本） |
 | 创始人 | 主人（panxiao）|
 | 灵感来源 | WhisperArchive |
 
 ## 🗓️ 版本计划
 
-### v0.2.0（当前）
+### v0.3.0（当前）
+- ✅ 跨模态自校验核心（ASR + OCR + 文本三元组）
+- ✅ Tesseract.js OCR 模块
+- ✅ Web Speech ASR 模块
+- ✅ 实体提取 + 跨模态实体链接
+- ✅ 油猴脚本版本（Tampermonkey）
+- ✅ 搜索结果图片自动 OCR 验证
+
+### v0.2.0
 - ✅ 双通道智能路由架构
 - ✅ 9 家 LLM 提供商 + 免费模型引导
 - ✅ 浏览器插件设置页 + 首次安装引导

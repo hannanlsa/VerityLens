@@ -1,7 +1,7 @@
 /**
- * VerityLens · Edge/Chrome Service Worker (MV3) · v0.2.0
+ * VerityLens · Edge/Chrome Service Worker (MV3) · v0.3.0
  *
- * 双通道智能路由：本地 + 云端LLM + Docker
+ * 双通道智能路由 + 跨模态自校验
  */
 
 chrome.runtime.onInstalled.addListener((details) => {
