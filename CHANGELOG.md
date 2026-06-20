@@ -5,6 +5,36 @@ All notable changes to **VerityLens** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-06-20
+
+### ⚠️ PATENT PENDING
+
+> This release contains patent-pending technology (shared with WhisperArchive).
+> Unauthorized reproduction, distribution, or public disclosure is prohibited.
+
+### Added
+
+#### Desktop Assistant (Tauri)
+- **New**: `desktop-assistant/` — Cross-platform desktop app (macOS / Windows / Linux)
+  - Tauri v2 + Vite + vanilla JS frontend
+  - URL verification + text verification
+  - Same channel modes: local / smart / cloud / docker
+  - Same 9 LLM providers support
+  - Lightweight: Tauri < 10MB vs Electron > 150MB
+
+#### CLI Tool (Python)
+- **New**: `cli/` — Command-line interface
+  - `verity check "text"` — Verify text authenticity
+  - `verity file path/to/file` — Verify file content
+  - `verity providers` — List free LLM providers
+  - Rich terminal output with color-coded results
+  - Environment variable support: `VERITY_API_KEY`, `VERITY_BASE_URL`
+  - Dependencies: httpx, click, rich
+
+### Changed
+- README updated with desktop + CLI sections
+- Architecture diagram updated
+
 ## [0.3.0] - 2026-06-20
 
 ### ⚠️ PATENT PENDING

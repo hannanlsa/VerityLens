@@ -4,7 +4,7 @@
 > A cross-modal fact-checking assistant for the post-truth era.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
-[![Status: v0.3.0](https://img.shields.io/badge/Status-v0.3.0-green)](CHANGELOG.md)
+[![Status: v0.4.0](https://img.shields.io/badge/Status-v0.4.0-green)](CHANGELOG.md)
 [![Patent: Pending](https://img.shields.io/badge/Patent-Pending-red)](PATENT_PENDING.md)
 
 ## ✨ 项目定位
@@ -137,13 +137,18 @@ VerityLens 与 WhisperArchive 共享 **5 件专利**：
 | 仓库名 | hannanlsa/VerityLens |
 | 可见性 | 🔒 PRIVATE（暂未公开） |
 | 协议 | AGPL-3.0 |
-| 状态 | v0.3.0（跨模态自校验 + 油猴脚本） |
+| 状态 | v0.4.0（桌面助手 + CLI） |
 | 创始人 | 主人（panxiao）|
 | 灵感来源 | WhisperArchive |
 
 ## 🗓️ 版本计划
 
-### v0.3.0（当前）
+### v0.4.0（当前）
+- ✅ 桌面助手（Tauri，macOS/Windows/Linux，< 10MB）
+- ✅ CLI 工具（Python，`verity check` / `verity file` / `verity providers`）
+- ✅ Rich 终端彩色输出
+
+### v0.3.0
 - ✅ 跨模态自校验核心（ASR + OCR + 文本三元组）
 - ✅ Tesseract.js OCR 模块
 - ✅ Web Speech ASR 模块

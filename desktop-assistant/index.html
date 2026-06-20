@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VerityLens · 真实透镜</title>
+  <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <h1>🛡️ VerityLens</h1>
+      <p class="subtitle">真实透镜 · 桌面助手 v0.4.0</p>
+    </header>
+
+    <main class="main">
+      <section class="card">
+        <h2>验证通道</h2>
+        <div class="radio-group">
+          <label><input type="radio" name="mode" value="local" checked> 🔒 纯本地</label>
+          <label><input type="radio" name="mode" value="smart"> ⚡ 智能切换</label>
+          <label><input type="radio" name="mode" value="cloud"> ☁️ 仅云端</label>
+          <label><input type="radio" name="mode" value="docker"> 🐳 仅Docker</label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>URL 验证</h2>
+        <div class="input-group">
+          <input type="text" id="urlInput" placeholder="输入网址进行验证...">
+          <button id="verifyBtn">验证</button>
+        </div>
+        <div id="result" class="result" style="display:none"></div>
+      </section>
+
+      <section class="card">
+        <h2>文本验证</h2>
+        <textarea id="textInput" rows="6" placeholder="粘贴文本进行真实性验证..."></textarea>
+        <button id="textVerifyBtn">验证文本</button>
+        <div id="textResult" class="result" style="display:none"></div>
+      </section>
+
+      <section class="card">
+        <h2>云端模型</h2>
+        <div class="form-row">
+          <select id="provider">
+            <option value="">-- 选择提供商 --</option>
+            <option value="deepseek">DeepSeek</option>
+            <option value="zhipu">🆓 智谱GLM</option>
+            <option value="qwen">🆓 通义千问</option>
+            <option value="siliconflow">🆓 硅基流动</option>
+            <option value="groq">🆓 Groq</option>
+            <option value="custom">自定义</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <input type="password" id="apiKey" placeholder="API Key">
+        </div>
+        <div class="form-row">
+          <input type="text" id="baseUrl" placeholder="自定义 Base URL（可选）">
+        </div>
+        <button id="saveCloudBtn">保存</button>
+      </section>
+    </main>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
