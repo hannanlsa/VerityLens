@@ -138,7 +138,7 @@ VerityLens 与 WhisperArchive 共享 **5 件专利**：
 | 可见性 | 🔒 PRIVATE（暂未公开） |
 | 协议 | AGPL-3.0 |
 | 状态 | v0.4.0（桌面助手 + CLI） |
-| 创始人 | 主人（panxiao）|
+| 创始人 | hannanlsa |
 | 灵感来源 | WhisperArchive |
 
 ## 🗓️ 版本计划

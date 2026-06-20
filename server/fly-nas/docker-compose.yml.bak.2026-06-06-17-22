@@ -2,7 +2,7 @@
 #
 # 与 WhisperArchive 共享：PostgreSQL / Redis / Qdrant / Ollama LLM
 # 独立：VerityLens API + 浏览器扩展同步服务
-# 主人决策：共享技术栈 + 共享飞牛 NAS + 留接口 = 后期接服务器 / 卖掉
+# 决策：共享技术栈 + 共享飞牛 NAS + 留接口 = 后期接服务器 / 卖掉
 
 version: '3.8'
 

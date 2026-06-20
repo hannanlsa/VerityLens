@@ -3,7 +3,7 @@
 // @namespace    veritylens
 // @version      0.3.0
 // @description  🛡️ 跨模态自校验 × 反虚假信息助手 · 双通道智能路由 + 三元组交叉验证
-// @author       panxiao
+// @author       hannanlsa
 // @homepage     https://github.com/hannanlsa/VerityLens
 // @license      AGPL-3.0
 // @match        *://www.baidu.com/s*

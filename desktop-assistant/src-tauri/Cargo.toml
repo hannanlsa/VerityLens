@@ -2,7 +2,7 @@
 name = "verity-lens"
 version = "0.4.0"
 description = "VerityLens · 真实透镜 · 桌面助手"
-authors = ["panxiao"]
+authors = ["hannanlsa"]
 edition = "2021"
 
 [build-dependencies]

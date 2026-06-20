@@ -1,6 +1,6 @@
 #!/bin/bash
 # VerityLens 浏览器插件三平台打包脚本
-# 主人 15:50 决策：Chrome / Edge / Firefox 全部适配
+# 决策：Chrome / Edge / Firefox 全部适配
 # 输出：dist/verity-lens-{chrome,edge,firefox}-v0.2.0.zip
 
 set -e
@@ -25,7 +25,7 @@ cat > "$BUILD_DIR/chrome/manifest.json" << 'EOF'
   "name": "VerityLens",
   "version": "0.2.0",
   "description": "🛡️ 跨模态自校验 × 反虚假信息助手",
-  "author": "panxiao",
+  "author": "hannanlsa",
   "homepage_url": "https://github.com/hannanlsa/VerityLens",
   "icons": {
     "16": "icons/icon-16.png",
@@ -82,7 +82,7 @@ cat > "$BUILD_DIR/edge/manifest.edge.json" << 'EOF'
   "name": "VerityLens · 真实透镜",
   "version": "0.2.0",
   "developer": {
-    "name": "panxiao",
+    "name": "hannanlsa",
     "websiteUrl": "https://github.com/hannanlsa/VerityLens"
   }
 }
@@ -103,7 +103,7 @@ cat > "$BUILD_DIR/firefox/manifest.json" << 'EOF'
   "name": "VerityLens",
   "version": "0.2.0",
   "description": "🛡️ 跨模态自校验 × 反虚假信息助手",
-  "author": "panxiao",
+  "author": "hannanlsa",
   "homepage_url": "https://github.com/hannanlsa/VerityLens",
   "icons": {
     "16": "icons/icon-16.png",
@@ -137,7 +137,7 @@ cat > "$BUILD_DIR/firefox/manifest.json" << 'EOF'
   "permissions": ["storage", "activeTab", "contextMenus", "<all_urls>"],
   "browser_specific_settings": {
     "gecko": {
-      "id": "veritylens@panxiao.dev",
+      "id": "veritylens@hannanlsa.dev",
       "strict_min_version": "115.0"
     }
   }

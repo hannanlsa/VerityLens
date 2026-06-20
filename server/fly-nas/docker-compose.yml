@@ -2,7 +2,7 @@
 #
 # 精简版：2 服务（FastAPI + Ollama）
 # 浏览器插件为主力形态，Docker 为可选本地推理通道
-# 主人决策：冷门端口 49152-65535（IANA 动态端口范围）
+# 决策：冷门端口 49152-65535（IANA 动态端口范围）
 # 与 WhisperArchive 端口错开：WhisperArchive 在 51000-65000，VerityLens 在 52000-63000
 # 冷门端口分配（2 服务 2 端口）
 # 61593  - API (FastAPI 主入口，OpenAI 兼容接口)
