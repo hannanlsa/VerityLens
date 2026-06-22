@@ -43,6 +43,24 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('about').addEventListener('click', () => {
     chrome.tabs.create({ url: 'https://github.com/hannanlsa/VerityLens' });
   });
+
+  document.getElementById('debug').addEventListener('click', () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'TOGGLE_DEBUG' });
+        window.close();
+      }
+    });
+  });
+
+  document.getElementById('translate').addEventListener('click', () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'TOGGLE_TRANSLATE' });
+        window.close();
+      }
+    });
+  });
 });
 
 chrome.runtime.onMessage.addListener((message) => {

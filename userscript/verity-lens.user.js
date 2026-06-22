@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VerityLens · 真实透镜
 // @namespace    veritylens
-// @version      0.3.0
+// @version      0.5.0
 // @description  🛡️ 跨模态自校验 × 反虚假信息助手 · 双通道智能路由 + 三元组交叉验证
 // @author       hannanlsa
 // @homepage     https://github.com/hannanlsa/VerityLens
@@ -37,7 +37,7 @@
   if (window.__verityLensInjected) return;
   window.__verityLensInjected = true;
 
-  const VERSION = '0.3.0';
+  const VERSION = '0.5.0';
 
   const CONFIDENCE = {
     HIGH: 'high', MEDIUM: 'medium', ABNORMAL: 'abnormal',
@@ -55,11 +55,15 @@
   };
 
   const PROVIDERS = {
-    deepseek: { name: 'DeepSeek', baseUrl: 'https://api.deepseek.com/v1', models: ['deepseek-chat'] },
-    zhipu: { name: '智谱GLM', baseUrl: 'https://open.bigmodel.cn/api/paas/v4', models: ['glm-4-flash'] },
-    qwen: { name: '通义千问', baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1', models: ['qwen-turbo'] },
-    siliconflow: { name: '硅基流动', baseUrl: 'https://api.siliconflow.cn/v1', models: ['Qwen/Qwen2.5-7B-Instruct'] },
+    deepseek: { name: 'DeepSeek', baseUrl: 'https://api.deepseek.com/v1', models: ['deepseek-chat', 'deepseek-reasoner'] },
+    zhipu: { name: '智谱GLM', baseUrl: 'https://open.bigmodel.cn/api/paas/v4', models: ['glm-4-flash', 'glm-4-air'] },
+    qwen: { name: '通义千问', baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1', models: ['qwen-turbo', 'qwen-plus'] },
+    siliconflow: { name: '硅基流动', baseUrl: 'https://api.siliconflow.cn/v1', models: ['Qwen/Qwen2.5-7B-Instruct', 'deepseek-ai/DeepSeek-V3', 'meta-llama/Llama-3.3-70B-Instruct'] },
     groq: { name: 'Groq', baseUrl: 'https://api.groq.com/openai/v1', models: ['llama-3.3-70b-versatile'] },
+    moonshot: { name: 'Moonshot', baseUrl: 'https://api.moonshot.cn/v1', models: ['moonshot-v1-8k'] },
+    minimax: { name: 'MiniMax', baseUrl: 'https://api.minimax.chat/v1', models: ['abab6.5s-chat'] },
+    yi: { name: '零一万物', baseUrl: 'https://api.lingyiwanwu.com/v1', models: ['yi-lightning'] },
+    baidu: { name: '百度千帆', baseUrl: 'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop', models: ['ernie-lite-8k'] },
     custom: { name: '自定义', baseUrl: '', models: [] }
   };
 

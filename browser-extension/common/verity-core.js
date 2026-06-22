@@ -1,5 +1,5 @@
 /**
- * VerityLens · Cross-Modal Verifier Core（v0.3.0）
+ * VerityLens · Cross-Modal Verifier Core（v0.5.0）
  *
  * 双通道智能路由 + 跨模态自校验：
  * - 本地通道：关键词匹配 + 正则规则 + Tesseract.js OCR + WebSpeech ASR + 三元组交叉验证
@@ -12,7 +12,7 @@
  */
 
 const VerityCore = {
-  VERSION: '0.3.0',
+  VERSION: '0.5.0',
   DEBUG: false,
 
   CONFIDENCE: {
@@ -32,11 +32,11 @@ const VerityCore = {
   },
 
   CONFIDENCE_LABEL: {
-    high: '高置信',
-    medium: '中等',
-    abnormal: '异常',
-    partial_X: '部分验证',
-    unverified: '未验证'
+    high: 'high',
+    medium: 'medium',
+    abnormal: 'abnormal',
+    partial_X: 'partial_X',
+    unverified: 'unverified'
   },
 
   MODE: {
@@ -44,6 +44,20 @@ const VerityCore = {
     SMART: 'smart',
     CLOUD: 'cloud',
     DOCKER: 'docker'
+  },
+
+  getConfidenceLabel(confidence) {
+    if (typeof VerityI18n !== 'undefined' && VerityI18n._loaded) {
+      const map = {
+        high: 'confidence_high',
+        medium: 'confidence_medium',
+        abnormal: 'confidence_abnormal',
+        partial_X: 'confidence_partial',
+        unverified: 'confidence_unverified'
+      };
+      return VerityI18n.t(map[confidence] || 'confidence_unverified');
+    }
+    return confidence;
   },
 
   log(...args) {
@@ -132,9 +146,9 @@ const VerityCore = {
     if (/\b(wikipedia|github|stackoverflow|mozilla|w3\.org)\b/.test(text)) score += 0.15;
     if (/\b(官方|官网|documentation|docs)\b/i.test(text)) score += 0.1;
 
-    if (/\b(广告|赞助|推广|ad|sponsored|promo)\b/i.test(text)) score -= 0.3;
-    if (/\b(限时|特惠|秒杀|打折|coupon|优惠|折扣)\b/i.test(text)) score -= 0.15;
-    if (/\b(点击|下载app|立即购买|马上注册)\b/i.test(text)) score -= 0.1;
+    if (/(?:广告|赞助|推广|ad|sponsored|promo)/i.test(text)) score -= 0.3;
+    if (/(?:限时|特惠|秒杀|打折|coupon|优惠|折扣)/i.test(text)) score -= 0.15;
+    if (/(?:点击|下载app|立即购买|马上注册)/i.test(text)) score -= 0.1;
 
     if (text.length > 1000 && /(.)\1{5,}/.test(text)) score -= 0.2;
     if ((text.match(/https?:\/\//g) || []).length > 10) score -= 0.15;
@@ -153,27 +167,30 @@ const VerityCore = {
 
 const MODEL_REGISTRY = {
   providers: {
-    deepseek: {
-      name: 'DeepSeek',
-      baseUrl: 'https://api.deepseek.com/v1',
-      models: [
-        { id: 'deepseek-chat', name: 'DeepSeek-V3', free: '注册送500万token' },
-        { id: 'deepseek-reasoner', name: 'DeepSeek-R1', free: '同上' }
-      ],
-      signupUrl: 'https://platform.deepseek.com/'
-    },
     zhipu: {
       name: '智谱GLM',
       baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
+      tier: 'free',
       models: [
         { id: 'glm-4-flash', name: 'GLM-4-Flash', free: '永久免费' },
         { id: 'glm-4-air', name: 'GLM-4-Air', free: '新用户送额度' }
       ],
       signupUrl: 'https://open.bigmodel.cn/'
     },
+    deepseek: {
+      name: 'DeepSeek',
+      baseUrl: 'https://api.deepseek.com/v1',
+      tier: 'free',
+      models: [
+        { id: 'deepseek-chat', name: 'DeepSeek-V3', free: '注册送500万token' },
+        { id: 'deepseek-reasoner', name: 'DeepSeek-R1', free: '同上' }
+      ],
+      signupUrl: 'https://platform.deepseek.com/'
+    },
     qwen: {
       name: '通义千问',
       baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+      tier: 'free',
       models: [
         { id: 'qwen-turbo', name: 'Qwen-Turbo', free: '新用户100万token' },
         { id: 'qwen-plus', name: 'Qwen-Plus', free: '新用户送额度' }
@@ -183,6 +200,7 @@ const MODEL_REGISTRY = {
     siliconflow: {
       name: '硅基流动',
       baseUrl: 'https://api.siliconflow.cn/v1',
+      tier: 'free',
       models: [
         { id: 'Qwen/Qwen2.5-7B-Instruct', name: 'Qwen2.5-7B', free: '注册送2000万token' },
         { id: 'deepseek-ai/DeepSeek-V3', name: 'DeepSeek-V3', free: '同上' },
@@ -193,6 +211,7 @@ const MODEL_REGISTRY = {
     groq: {
       name: 'Groq',
       baseUrl: 'https://api.groq.com/openai/v1',
+      tier: 'free',
       models: [
         { id: 'llama-3.3-70b-versatile', name: 'Llama-3.3-70B', free: '免费速率限制' }
       ],
@@ -201,6 +220,7 @@ const MODEL_REGISTRY = {
     moonshot: {
       name: 'Moonshot',
       baseUrl: 'https://api.moonshot.cn/v1',
+      tier: 'free',
       models: [
         { id: 'moonshot-v1-8k', name: 'Moonshot-v1', free: '新用户送额度' }
       ],
@@ -209,6 +229,7 @@ const MODEL_REGISTRY = {
     minimax: {
       name: 'MiniMax',
       baseUrl: 'https://api.minimax.chat/v1',
+      tier: 'free',
       models: [
         { id: 'abab6.5s-chat', name: 'ABAB-6.5s', free: '注册送额度' }
       ],
@@ -217,6 +238,7 @@ const MODEL_REGISTRY = {
     yi: {
       name: '零一万物',
       baseUrl: 'https://api.lingyiwanwu.com/v1',
+      tier: 'free',
       models: [
         { id: 'yi-lightning', name: 'Yi-Lightning', free: '注册送额度' }
       ],
@@ -225,14 +247,76 @@ const MODEL_REGISTRY = {
     baidu: {
       name: '百度千帆',
       baseUrl: 'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop',
+      tier: 'free',
       models: [
         { id: 'ernie-lite-8k', name: 'ERNIE-Lite', free: '每月免费额度' }
       ],
       signupUrl: 'https://console.bce.baidu.com/qianfan/'
     },
+    openai: {
+      name: 'OpenAI',
+      baseUrl: 'https://api.openai.com/v1',
+      tier: 'paid',
+      models: [
+        { id: 'gpt-4o-mini', name: 'GPT-4o-mini', free: '', price: '$0.15/1M input' },
+        { id: 'gpt-4o', name: 'GPT-4o', free: '', price: '$2.50/1M input' }
+      ],
+      signupUrl: 'https://platform.openai.com/'
+    },
+    claude: {
+      name: 'Anthropic Claude',
+      baseUrl: 'https://api.anthropic.com/v1',
+      tier: 'paid',
+      models: [
+        { id: 'claude-3-5-haiku-20241022', name: 'Claude-3.5-Haiku', free: '', price: '$0.80/1M input' },
+        { id: 'claude-sonnet-4-20250514', name: 'Claude-Sonnet-4', free: '', price: '$3/1M input' }
+      ],
+      signupUrl: 'https://console.anthropic.com/'
+    },
+    gemini: {
+      name: 'Google Gemini',
+      baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
+      tier: 'paid',
+      models: [
+        { id: 'gemini-2.0-flash', name: 'Gemini-2.0-Flash', free: '', price: '$0.10/1M input' },
+        { id: 'gemini-2.5-pro-preview-06-05', name: 'Gemini-2.5-Pro', free: '', price: '$1.25/1M input' }
+      ],
+      signupUrl: 'https://aistudio.google.com/'
+    },
+    doubao: {
+      name: '字节豆包',
+      baseUrl: 'https://ark.cn-beijing.volces.com/api/v3',
+      tier: 'paid',
+      models: [
+        { id: 'doubao-1-5-pro-32k-250115', name: 'Doubao-1.5-Pro', free: '', price: '¥0.5/1M input' },
+        { id: 'doubao-1-5-lite-32k-250115', name: 'Doubao-1.5-Lite', free: '', price: '¥0.05/1M input' }
+      ],
+      signupUrl: 'https://console.volcengine.com/ark'
+    },
+    hunyuan: {
+      name: '腾讯混元',
+      baseUrl: 'https://api.hunyuan.cloud.tencent.com/v1',
+      tier: 'paid',
+      models: [
+        { id: 'hunyuan-lite', name: '混元-Lite', free: '', price: '¥0.1/1M input' },
+        { id: 'hunyuan-turbos', name: '混元-TurboS', free: '', price: '¥0.8/1M input' }
+      ],
+      signupUrl: 'https://cloud.tencent.com/product/hunyuan'
+    },
+    spark: {
+      name: '讯飞星火',
+      baseUrl: 'https://spark-api-open.xf-yun.com/v1',
+      tier: 'paid',
+      models: [
+        { id: 'generalv3.5', name: 'Spark-4.0-Ultra', free: '', price: '¥0.6/1M input' },
+        { id: '4.0Ultra', name: 'Spark-Max', free: '', price: '¥0.2/1M input' }
+      ],
+      signupUrl: 'https://xinghuo.xfyun.cn/'
+    },
     custom: {
       name: '自定义',
       baseUrl: '',
+      tier: 'custom',
       models: [],
       signupUrl: ''
     }
@@ -248,6 +332,7 @@ const MODEL_REGISTRY = {
       .map(([id, p]) => ({
         id,
         name: p.name,
+        tier: p.tier,
         hasFree: p.models.some(m => m.free),
         models: p.models,
         signupUrl: p.signupUrl
@@ -256,6 +341,14 @@ const MODEL_REGISTRY = {
 
   getFreeProviders() {
     return this.getAllProviders().filter(p => p.hasFree);
+  },
+
+  getPaidProviders() {
+    return this.getAllProviders().filter(p => p.tier === 'paid');
+  },
+
+  getProvidersByTier(tier) {
+    return this.getAllProviders().filter(p => p.tier === tier);
   }
 };
 
@@ -293,21 +386,54 @@ const SmartRouter = {
   },
 
   async loadConfig() {
-    return new Promise((resolve) => {
-      chrome.storage.local.get([
-        'channelMode', 'apiProvider', 'apiKey', 'apiModel', 'dockerUrl',
-        'cloudProviders'
-      ], (data) => {
-        resolve({
-          mode: data.channelMode || VerityCore.MODE.SMART,
-          apiProvider: data.apiProvider || '',
-          apiKey: data.apiKey || '',
-          apiModel: data.apiModel || '',
-          dockerUrl: data.dockerUrl || '',
-          cloudProviders: data.cloudProviders || []
+    try {
+      if (typeof chrome === 'undefined' || !chrome.storage?.local) {
+        return {
+          mode: VerityCore.MODE.LOCAL,
+          apiProvider: '',
+          apiKey: '',
+          apiModel: '',
+          dockerUrl: '',
+          cloudProviders: []
+        };
+      }
+      return new Promise((resolve) => {
+        const timeout = setTimeout(() => {
+          resolve({
+            mode: VerityCore.MODE.LOCAL,
+            apiProvider: '',
+            apiKey: '',
+            apiModel: '',
+            dockerUrl: '',
+            cloudProviders: []
+          });
+        }, 2000);
+
+        chrome.storage.local.get([
+          'channelMode', 'apiProvider', 'apiKey', 'apiModel', 'dockerUrl',
+          'cloudProviders'
+        ], (data) => {
+          clearTimeout(timeout);
+          resolve({
+            mode: data.channelMode || VerityCore.MODE.SMART,
+            apiProvider: data.apiProvider || '',
+            apiKey: data.apiKey || '',
+            apiModel: data.apiModel || '',
+            dockerUrl: data.dockerUrl || '',
+            cloudProviders: data.cloudProviders || []
+          });
         });
       });
-    });
+    } catch {
+      return {
+        mode: VerityCore.MODE.LOCAL,
+        apiProvider: '',
+        apiKey: '',
+        apiModel: '',
+        dockerUrl: '',
+        cloudProviders: []
+      };
+    }
   },
 
   async selectBestCloud(config) {
@@ -354,10 +480,13 @@ const SmartRouter = {
     try {
       const headers = { 'Content-Type': 'application/json' };
       if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 3000);
       const resp = await fetch(`${baseUrl}/models`, {
         headers,
-        signal: AbortSignal.timeout(3000)
+        signal: controller.signal
       });
+      clearTimeout(timer);
       return resp.ok;
     } catch {
       return false;
@@ -410,6 +539,8 @@ const Channel = {
       const headers = { 'Content-Type': 'application/json' };
       if (apiKey && apiKey !== 'local') headers['Authorization'] = `Bearer ${apiKey}`;
 
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 15000);
       const resp = await fetch(`${baseUrl}/chat/completions`, {
         method: 'POST',
         headers,
@@ -422,8 +553,9 @@ const Channel = {
           temperature: 0.1,
           max_tokens: 512
         }),
-        signal: AbortSignal.timeout(15000)
+        signal: controller.signal
       });
+      clearTimeout(timer);
 
       if (!resp.ok) {
         const errText = await resp.text().catch(() => '');

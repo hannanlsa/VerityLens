@@ -1,5 +1,5 @@
 /**
- * VerityLens · Cross-Modal Verifier · 三元组交叉验证（v0.3.0）
+ * VerityLens · Cross-Modal Verifier · 三元组交叉验证（v0.5.0）
  *
  * 核心专利 1.1：跨模态自校验框架
  * - ASR（语音）+ OCR（屏幕）+ 文本 三元组交叉验证
@@ -14,6 +14,25 @@ const CrossModalVerifier = {
   reset() {
     this.entityCache.clear();
     this.timeline = [];
+  },
+
+  _t(key, params) {
+    if (typeof VerityI18n !== 'undefined' && VerityI18n._loaded) {
+      return VerityI18n.t(key, params);
+    }
+    const fallback = {
+      verify_asr_match: `✓ ASR verified (entity links: ${params?.links}, text match: ${params?.match}%)`,
+      verify_asr_partial: `⚠ ASR partial (entity links: ${params?.links}, text match: ${params?.match}%)`,
+      verify_asr_mismatch: `✗ ASR mismatch (text match: ${params?.match}%)`,
+      verify_ocr_match: `✓ OCR verified (entity links: ${params?.links}, text match: ${params?.match}%)`,
+      verify_ocr_partial: `⚠ OCR partial (entity links: ${params?.links}, text match: ${params?.match}%)`,
+      verify_ocr_mismatch: `✗ OCR mismatch (text match: ${params?.match}%)`,
+      verify_asr_ocr_consistent: `✓ ASR-OCR consistent (shared entities: ${params?.links})`,
+      verify_heuristic_only: `📝 Text heuristic ${params?.score}%`,
+      verify_triple_cross: `🔬 Triple cross-verification (${params?.count} modalities)`,
+      verify_dual_cross: `🔬 Dual-modal cross-verification`
+    };
+    return fallback[key] || key;
   },
 
   extractEntities(text) {
@@ -106,11 +125,11 @@ const CrossModalVerifier = {
       totalWeight += asrWeight;
 
       if (asrScore > 0.7) {
-        reasons.push(`✓ ASR 验证通过 (实体链接${asrLinks.length}个, 文本匹配${(asrTextMatch * 100).toFixed(0)}%)`);
+        reasons.push(this._t('verify_asr_match', { links: asrLinks.length, match: (asrTextMatch * 100).toFixed(0) }));
       } else if (asrScore > 0.4) {
-        reasons.push(`⚠ ASR 部分匹配 (实体链接${asrLinks.length}个, 文本匹配${(asrTextMatch * 100).toFixed(0)}%)`);
+        reasons.push(this._t('verify_asr_partial', { links: asrLinks.length, match: (asrTextMatch * 100).toFixed(0) }));
       } else {
-        reasons.push(`✗ ASR 不匹配 (文本匹配${(asrTextMatch * 100).toFixed(0)}%)`);
+        reasons.push(this._t('verify_asr_mismatch', { match: (asrTextMatch * 100).toFixed(0) }));
       }
 
       this.timeline.push({
@@ -136,11 +155,11 @@ const CrossModalVerifier = {
       totalWeight += ocrWeight;
 
       if (ocrScore > 0.7) {
-        reasons.push(`✓ OCR 验证通过 (实体链接${ocrLinks.length}个, 文本匹配${(ocrTextMatch * 100).toFixed(0)}%)`);
+        reasons.push(this._t('verify_ocr_match', { links: ocrLinks.length, match: (ocrTextMatch * 100).toFixed(0) }));
       } else if (ocrScore > 0.4) {
-        reasons.push(`⚠ OCR 部分匹配 (实体链接${ocrLinks.length}个, 文本匹配${(ocrTextMatch * 100).toFixed(0)}%)`);
+        reasons.push(this._t('verify_ocr_partial', { links: ocrLinks.length, match: (ocrTextMatch * 100).toFixed(0) }));
       } else {
-        reasons.push(`✗ OCR 不匹配 (文本匹配${(ocrTextMatch * 100).toFixed(0)}%)`);
+        reasons.push(this._t('verify_ocr_mismatch', { match: (ocrTextMatch * 100).toFixed(0) }));
       }
 
       this.timeline.push({
@@ -158,7 +177,7 @@ const CrossModalVerifier = {
         this.extractEntities(ocrResult.text)
       );
       if (asrOcrLinks.length > 0) {
-        reasons.push(`✓ ASR-OCR 跨模态一致 (共享实体${asrOcrLinks.length}个)`);
+        reasons.push(this._t('verify_asr_ocr_consistent', { links: asrOcrLinks.length }));
         weightedScore += 0.1;
         totalWeight += 0.1;
       }
@@ -169,14 +188,14 @@ const CrossModalVerifier = {
       finalScore = weightedScore / totalWeight;
     } else {
       finalScore = VerityCore.textHeuristic(textContent);
-      reasons.push(`📝 仅文本启发式评分 ${(finalScore * 100).toFixed(0)}%`);
+      reasons.push(this._t('verify_heuristic_only', { score: (finalScore * 100).toFixed(0) }));
     }
 
     const modalityCount = [asrResult?.text, ocrResult?.text, textContent].filter(Boolean).length;
     if (modalityCount >= 3) {
-      reasons.push(`🔬 三元组交叉验证 (${modalityCount}模态)`);
+      reasons.push(this._t('verify_triple_cross', { count: modalityCount }));
     } else if (modalityCount === 2) {
-      reasons.push(`🔬 双模态交叉验证`);
+      reasons.push(this._t('verify_dual_cross'));
     }
 
     return {

@@ -4,7 +4,7 @@
 > A cross-modal fact-checking assistant for the post-truth era.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
-[![Status: v0.4.0](https://img.shields.io/badge/Status-v0.4.0-green)](CHANGELOG.md)
+[![Status: v0.5.0](https://img.shields.io/badge/Status-v0.5.0-green)](CHANGELOG.md)
 [![Patent: Pending](https://img.shields.io/badge/Patent-Pending-red)](PATENT_PENDING.md)
 
 ## ✨ 项目定位
@@ -13,7 +13,7 @@
 
 - 🎯 核心 = 帮用户在搜索结果中识别广告 / SEO / 真实内容
 - 🛡️ 特性 = **跨模态自校验**（ASR + OCR + 文本三元组）
-- 🌍 形态 = **浏览器插件为主** + Docker 可选 + 油猴脚本（计划）+ CLI（计划）
+- 🌍 形态 = **浏览器插件为主** + Docker 自建可选 + CLI 可选
 - 🔒 原则 = **本地优先 + 隐私保护 + 自用场景**
 - 🆓 开源 = AGPL-3.0 协议 + **永不商业化** = 永久免费
 
@@ -54,7 +54,7 @@
 | 🔒 纯本地 | 关键词+正则启发式 | ✅ 零泄露 | 低 |
 | ⚡ 智能切换（推荐） | 轻量→本地，复杂→云端 | ⚠️ 复杂任务走云端 | 高 |
 | ☁️ 仅云端 | 所有验证走 LLM | ⚠️ 全走云端 | 最高 |
-| 🐳 仅 Docker | 自建 Ollama | ✅ 零泄露 | 高 |
+| 🐳 自建 Docker | 自建 Ollama（电脑/NAS） | ✅ 零泄露 | 高 |
 
 ### 🆓 免费模型支持（9家）
 
@@ -86,21 +86,37 @@ verity-lens/
 │   ├── background/           # Service Worker (MV3) + Background (MV2)
 │   ├── common/
 │   │   ├── verity-core.js    # 核心引擎 + 模型注册表 + 智能路由 + 统一通道
+│   │   ├── i18n/             # 国际化
+│   │   │   ├── i18n-core.js  # i18n 核心（自动检测语言）
+│   │   │   ├── zh-CN.json    # 中文翻译（65键）
+│   │   │   └── en.json       # 英文翻译（65键）
 │   │   └── modules/          # 跨模态模块
 │   │       ├── asr.js        # Web Speech ASR
 │   │       ├── ocr.js        # Tesseract.js OCR
 │   │       └── cross-modal.js # 三元组交叉验证 + 实体链接 + 统一时间轴
 │   ├── content/
-│   │   └── verity-injector.js # 搜索结果标注注入（含图片OCR）
+│   │   ├── verity-injector.js # 搜索结果标注注入（含图片OCR）
+│   │   └── verity-styles.css  # 内容脚本样式
+│   ├── icons/                # 扩展图标（16/32/48/128px）
 │   ├── options/              # 设置页（模型选择器 + 免费模型引导）
 │   ├── popup/                # 弹出面板
 │   ├── welcome/              # 首次安装引导
 │   └── manifest.json
-├── userscript/               # 油猴脚本（独立运行）
-│   └── verity-lens.user.js
-├── server/                   # Docker 部署（可选）
+
+├── desktop-assistant/        # 桌面助手（Tauri）
+│   ├── src-tauri/
+│   │   └── src/              # Rust 后端（verify_text + verify_cloud）
+│   ├── src/                  # 前端（Vite + vanilla JS）
+│   └── package.json
+├── cli/                      # CLI 工具（Python）
+│   └── verity_lens_cli/
+│       └── cli.py            # click + rich 终端彩色输出
+├── server/                   # Docker 自建部署（高级用户可选）
 │   └── fly-nas/
-│       └── docker-compose.yml # 精简版 2 服务（FastAPI + Ollama）
+│       ├── app.py            # FastAPI（OpenAI 兼容接口代理 + 原生验证）
+│       ├── Dockerfile
+│       ├── requirements.txt
+│       └── docker-compose.yml # 精简版 2 服务（FastAPI + Ollama），适合电脑/NAS自建
 └── docs/
     └── legal/                # 法律风险评估
 ```
@@ -113,10 +129,11 @@ verity-lens/
 - OpenAI 兼容接口（统一云端/Docker 调用）
 - 9 家 LLM 提供商预置
 
-### Docker（可选）
+### Docker（自建，高级用户可选）
 - FastAPI（OpenAI 兼容接口代理）
-- Ollama + Qwen2.5-7B（本地推理）
+- Ollama + Qwen2.5-7B（本地推理，适合有GPU的用户）
 - 冷门端口：61593（API）、63257（Ollama）
+- 适合在自有电脑或NAS上搭建，数据完全不出你的网络
 
 ## 🤝 共享专利池
 
@@ -137,40 +154,37 @@ VerityLens 与 WhisperArchive 共享 **5 件专利**：
 | 仓库名 | hannanlsa/VerityLens |
 | 可见性 | 🔒 PRIVATE（暂未公开） |
 | 协议 | AGPL-3.0 |
-| 状态 | v0.4.0（桌面助手 + CLI） |
+| 状态 | v0.5.0（i18n + 桌面助手Rust后端 + Docker FastAPI） |
 | 创始人 | hannanlsa |
 | 灵感来源 | WhisperArchive |
 
 ## 🗓️ 版本计划
 
-### v0.4.0（当前）
+### v0.5.0（当前）
+- ✅ i18n 国际化（中文/英文，65个翻译键）
+- ✅ 浏览器插件图标 + 内容样式补齐
+- ✅ 桌面助手 Rust 后端（verify_text + verify_cloud 命令）
+- ✅ Docker FastAPI 服务端（OpenAI 兼容代理 + 原生验证端点）
+- ✅ 油猴脚本升级至9家LLM全量支持
+- ✅ 全模块版本号统一为 v0.5.0
+
+### v0.4.0
 - ✅ 桌面助手（Tauri，macOS/Windows/Linux，< 10MB）
 - ✅ CLI 工具（Python，`verity check` / `verity file` / `verity providers`）
 - ✅ Rich 终端彩色输出
 
 ### v0.3.0
 - ✅ 跨模态自校验核心（ASR + OCR + 文本三元组）
-- ✅ Tesseract.js OCR 模块
-- ✅ Web Speech ASR 模块
-- ✅ 实体提取 + 跨模态实体链接
-- ✅ 油猴脚本版本（Tampermonkey）
-- ✅ 搜索结果图片自动 OCR 验证
+- ✅ 油猴脚本版本
+- ✅ Tesseract.js OCR 集成
 
-### v0.2.0
+### v0.4.0
 - ✅ 双通道智能路由架构
 - ✅ 9 家 LLM 提供商 + 免费模型引导
 - ✅ 浏览器插件设置页 + 首次安装引导
 - ✅ Docker 精简为 2 服务（FastAPI + Ollama）
 - ✅ 智能切换：轻量→本地，复杂→云端
 
-### v0.3.0（计划）
-- ⏳ 跨模态自校验核心（ASR + OCR + 文本三元组）
-- ⏳ 油猴脚本版本
-- ⏳ Tesseract.js OCR 集成
-
-### v0.4.0（计划）
-- ⏳ 桌面助手（macOS / Windows / Linux）
-- ⏳ CLI 工具
 
 ### v1.0.0（远期）
 - ⏳ Android 端

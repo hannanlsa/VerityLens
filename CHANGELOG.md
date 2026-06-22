@@ -5,6 +5,54 @@ All notable changes to **VerityLens** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-06-22
+
+### ⚠️ PATENT PENDING
+
+> This release contains patent-pending technology (shared with WhisperArchive).
+> Unauthorized reproduction, distribution, or public disclosure is prohibited.
+
+### Added
+
+#### i18n Internationalization
+- **New**: `common/i18n/i18n-core.js` — VerityI18n with locale detection + storage persistence
+- **New**: `common/i18n/zh-CN.json` — Chinese (Simplified) translations (65 keys)
+- **New**: `common/i18n/en.json` — English translations (65 keys)
+- Auto-detect browser language, fallback to zh-CN
+- Persistent locale preference via chrome.storage.local
+
+#### Browser Extension
+- **New**: `content/verity-styles.css` — Extracted CSS for content script annotations
+- **New**: `icons/` — Extension icons (16/32/48/128px)
+- Version unified to 0.5.0 across all modules
+
+#### Desktop Assistant (Tauri)
+- **New**: `src-tauri/src/lib.rs` — Rust backend with `verify_text` and `verify_cloud` commands
+- **New**: `src-tauri/src/main.rs` — Tauri entry point
+- **New**: `src-tauri/build.rs` — Tauri build script
+- 9 LLM providers supported in Rust backend
+- Local heuristic verification via native Rust regex
+- Cloud verification via reqwest async HTTP client
+
+#### Docker Server
+- **New**: `server/fly-nas/app.py` — FastAPI application (OpenAI-compatible proxy)
+  - `/health` — Health check endpoint
+  - `/v1/models` — Model listing
+  - `/v1/chat/completions` — OpenAI-compatible chat proxy
+  - `/verify` — VerityLens native verification endpoint
+  - 9 LLM providers + local heuristic fallback
+- **New**: `server/fly-nas/Dockerfile` — Python 3.12 slim image
+- **New**: `server/fly-nas/requirements.txt` — FastAPI + uvicorn + httpx + pydantic
+
+#### Userscript
+- Updated to v0.5.0 with full 9 LLM provider support
+- Added: Moonshot, MiniMax, 零一万物, 百度千帆 providers
+
+### Changed
+- All version numbers unified to 0.5.0 (CLI, desktop, userscript, Docker, manifest)
+- `build.sh` updated for v0.5.0 packaging
+- Docker compose version comment updated to v0.5.0
+
 ## [0.4.0] - 2026-06-20
 
 ### ⚠️ PATENT PENDING

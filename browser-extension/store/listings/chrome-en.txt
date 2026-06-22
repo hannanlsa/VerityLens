@@ -1,0 +1,64 @@
+# Chrome Web Store Listing (English)
+
+## Name (45 chars max)
+VerityLens
+
+## Short Description (132 chars max)
+Fact-checking assistant for search results. Identify ads, SEO farms, and credible content across 6 search engines.
+
+## Detailed Description
+
+🛡️ VerityLens — Your Truth Lens for Search Results
+
+Automatically annotate the credibility of every search result, helping you spot ads, SEO farms, and trustworthy content at a glance.
+
+🔍 Supported Search Engines
+Baidu · 360 Search · Sogou · Google · Bing · DuckDuckGo
+
+📊 5-Level Credibility Rating
+• 🟢 High — Official/academic/authoritative sources
+• 🟡 Medium — Personal blogs/moderately credible
+• 🟠 Partial — Credible but with concerns
+• 🔴 Abnormal — Likely ads/SEO farms/sponsored content
+• ⚪ Unverified — Cannot determine
+
+🔒 4 Verification Modes
+• Local Only — Zero network requests, zero privacy risk, works out of the box
+• Smart Switch (Recommended) — Lightweight → local, complex → AI, automatic selection
+• Cloud Only — All verification via AI models, highest accuracy
+• Self-hosted Docker — Run your own AI model on your PC or NAS, fully private, for advanced users
+
+🆓 Free AI Models (Recommended)
+No payment required! Start with GLM-4-Flash, permanently free:
+• 🌟 GLM-4-Flash — Permanently free, zero barrier to entry
+• DeepSeek — 5M free tokens on signup
+• Qwen — 1M free tokens for new users
+• SiliconFlow — 20M free tokens on signup
+• Groq · Moonshot · MiniMax · Yi · Baidu Qianfan — All have free tiers
+
+🐳 Self-hosted Docker (Advanced)
+If you have a GPU and Docker, run your own AI model on your PC or NAS:
+• Fully private — data never leaves your network
+• Supports Ollama + Qwen2.5 and other open-source models
+• See project docs for Docker deployment guide
+
+🧠 Smart Features
+• Auto-detect ad/marketing/SEO characteristics in search results
+• Image text recognition for verification
+• Voice content analysis for verification
+• Right-click context menu for quick verification
+• Adjustable confidence threshold
+
+⚡ Quick Start
+1. Install and visit any supported search engine
+2. Results are automatically annotated with color bars
+3. Hover to see detailed scores and reasons
+4. Want higher accuracy? Select a free AI model in Settings
+
+🛡️ Privacy Protection
+• Local mode: Zero data collection, zero network requests
+• Cloud mode: Only sends search result text to your chosen AI provider
+• Self-hosted Docker: Data never leaves your network
+• API keys stored locally in your browser — we never collect them
+
+Open Source: AGPL-3.0 · Free Forever

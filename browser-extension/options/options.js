@@ -1,9 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
   const providers = MODEL_REGISTRY.getAllProviders();
   const freeProviders = MODEL_REGISTRY.getFreeProviders();
+  const paidProviders = MODEL_REGISTRY.getPaidProviders();
 
   initProviderSelect(providers);
   initFreeModelList(freeProviders);
+  initPaidModelList(paidProviders);
   loadSettings();
   bindEvents();
 });
@@ -11,12 +13,26 @@ document.addEventListener('DOMContentLoaded', () => {
 function initProviderSelect(providers) {
   const select = document.getElementById('apiProvider');
   select.innerHTML = '<option value="">-- 选择提供商 --</option>';
+
+  const freeGroup = document.createElement('optgroup');
+  freeGroup.label = '🆓 免费模型';
+  const paidGroup = document.createElement('optgroup');
+  paidGroup.label = '💎 付费模型';
+
   providers.forEach(p => {
     const opt = document.createElement('option');
     opt.value = p.id;
-    opt.textContent = `${p.hasFree ? '🆓 ' : ''}${p.name}`;
-    select.appendChild(opt);
+    opt.textContent = `${p.hasFree ? '🆓 ' : '💎 '}${p.name}`;
+    if (p.tier === 'paid') {
+      paidGroup.appendChild(opt);
+    } else {
+      freeGroup.appendChild(opt);
+    }
   });
+
+  select.appendChild(freeGroup);
+  select.appendChild(paidGroup);
+
   const customOpt = document.createElement('option');
   customOpt.value = 'custom';
   customOpt.textContent = '自定义';
@@ -54,10 +70,42 @@ function initFreeModelList(freeProviders) {
   });
 }
 
+function initPaidModelList(paidProviders) {
+  const container = document.getElementById('paidModelList');
+  container.innerHTML = '';
+
+  paidProviders.forEach(p => {
+    p.models.forEach(m => {
+      const item = document.createElement('div');
+      item.className = 'free-model-item';
+      item.dataset.provider = p.id;
+      item.dataset.model = m.id;
+      item.innerHTML = `
+        <div class="free-model-info">
+          <div class="free-model-name">${p.name} · ${m.name}</div>
+          <div class="free-model-desc">${m.price || '按量计费'}</div>
+        </div>
+        <span class="free-model-badge" style="background:#7c3aed">💎 付费</span>
+      `;
+      item.addEventListener('click', () => {
+        document.getElementById('apiProvider').value = p.id;
+        onProviderChange();
+        document.getElementById('apiModel').value = m.id;
+        document.getElementById('signupHint').style.display = 'flex';
+        document.getElementById('freeText').textContent = m.price || '按量计费';
+        const provider = MODEL_REGISTRY.getProvider(p.id);
+        document.getElementById('signupLink').href = provider.signupUrl;
+      });
+      container.appendChild(item);
+    });
+  });
+}
+
 function loadSettings() {
   chrome.storage.local.get([
     'channelMode', 'apiProvider', 'apiKey', 'apiModel',
-    'dockerUrl', 'dockerModel', 'complexityThreshold'
+    'dockerUrl', 'dockerModel', 'complexityThreshold',
+    'translateEnabled', 'targetLang'
   ], (data) => {
     const mode = data.channelMode || 'smart';
     document.querySelector(`input[name=channelMode][value="${mode}"]`).checked = true;
@@ -74,6 +122,9 @@ function loadSettings() {
     const threshold = data.complexityThreshold || 3;
     document.getElementById('complexityThreshold').value = threshold;
     document.getElementById('thresholdValue').textContent = threshold;
+
+    document.getElementById('translateEnabled').checked = data.translateEnabled !== false;
+    document.getElementById('targetLang').value = data.targetLang || 'zh';
   });
 }
 
@@ -240,6 +291,8 @@ function saveSettings() {
     dockerUrl: dockerUrl,
     dockerModel: dockerModel,
     complexityThreshold: threshold,
+    translateEnabled: document.getElementById('translateEnabled').checked,
+    targetLang: document.getElementById('targetLang').value,
     enabled: true
   };
 

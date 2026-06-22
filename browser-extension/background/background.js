@@ -1,5 +1,5 @@
 /**
- * VerityLens · Firefox Background Script (MV2) · v0.3.0
+ * VerityLens · Firefox Background Script (MV2) · v0.5.0
  *
  * 双通道智能路由 + 跨模态自校验
  */

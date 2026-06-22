@@ -80,7 +80,7 @@ function renderResult(el, result) {
   el.innerHTML = `
     <div class="score" style="color:${color}">${label} ${(result.score * 100).toFixed(0)}%</div>
     <div class="reasons">${result.reasons.map(r => `<div>${r}</div>`).join('')}</div>
-    <div style="font-size:11px;opacity:0.5;margin-top:6px">${result.channel === 'cloud' ? '☁️ ' + (result.model || 'LLM') : '🔒 本地'} · VerityLens v0.4.0</div>
+    <div style="font-size:11px;opacity:0.5;margin-top:6px">${result.channel === 'cloud' ? '☁️ ' + (result.model || 'LLM') : '🔒 本地'} · VerityLens v0.5.0</div>
   `;
 }
 

@@ -1,30 +1,27 @@
 #!/bin/bash
 # VerityLens 浏览器插件三平台打包脚本
-# 决策：Chrome / Edge / Firefox 全部适配
-# 输出：dist/verity-lens-{chrome,edge,firefox}-v0.2.0.zip
+# 输出：dist/verity-lens-{chrome,edge,firefox}-v0.5.0.zip
 
 set -e
 cd "$(dirname "$0")"
 
-VERSION="0.2.0"
+VERSION="0.5.0"
 BUILD_DIR="build"
 DIST_DIR="dist"
 
-# 清理
 rm -rf "$BUILD_DIR" "$DIST_DIR"
 mkdir -p "$DIST_DIR"
 
 echo "=== 1. Chrome / Edge 打包（共用 MV3） ==="
 mkdir -p "$BUILD_DIR/chrome"
-cp -r common content popup background options icons "$BUILD_DIR/chrome/"
+cp -r common content popup background options welcome icons "$BUILD_DIR/chrome/"
 
-# Chrome manifest
 cat > "$BUILD_DIR/chrome/manifest.json" << 'EOF'
 {
   "manifest_version": 3,
   "name": "VerityLens",
-  "version": "0.2.0",
-  "description": "🛡️ 跨模态自校验 × 反虚假信息助手",
+  "version": "0.5.0",
+  "description": "搜索结果真实性标注助手 · 帮你识别广告、SEO农场和可信内容 · 支持6大搜索引擎",
   "author": "hannanlsa",
   "homepage_url": "https://github.com/hannanlsa/VerityLens",
   "icons": {
@@ -35,35 +32,75 @@ cat > "$BUILD_DIR/chrome/manifest.json" << 'EOF'
   },
   "action": {
     "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    },
     "default_title": "VerityLens · 真实透镜"
   },
   "background": {
-    "service_worker": "background/service-worker.js"
+    "service_worker": "background/service-worker.js",
+    "type": "module"
   },
   "content_scripts": [
     {
       "matches": [
-        "*://www.baidu.com/*",
-        "*://www.so.com/*",
-        "*://www.sogou.com/*",
-        "*://www.google.com/*",
+        "*://www.baidu.com/s*",
+        "*://www.baidu.com/baidu*",
+        "*://www.so.com/s*",
+        "*://www.sogou.com/web*",
+        "*://www.google.com/search*",
         "*://duckduckgo.com/*",
-        "*://www.bing.com/*"
+        "*://www.bing.com/search*"
       ],
-      "js": ["common/verity-core.js", "content/verity-injector.js"],
-      "css": ["content/verity-styles.css"],
-      "run_at": "document_idle"
+      "js": [
+        "common/i18n/i18n-core.js",
+        "common/modules/ocr.js",
+        "common/modules/asr.js",
+        "common/modules/cross-modal.js",
+        "common/verity-core.js",
+        "content/verity-injector.js"
+      ],
+      "css": [
+        "content/verity-styles.css"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "common/modules/translator.js",
+        "common/verity-core.js",
+        "content/verity-translator.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
     }
   ],
-  "permissions": ["storage", "activeTab", "scripting", "contextMenus"],
+  "options_page": "options/options.html",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "contextMenus"
+  ],
   "host_permissions": [
-    "*://www.baidu.com/*",
-    "*://www.so.com/*",
-    "*://www.sogou.com/*",
-    "*://www.google.com/*",
-    "*://duckduckgo.com/*",
-    "*://www.bing.com/*"
-  ]
+    "<all_urls>"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "common/verity-core.js",
+        "common/modules/*.js",
+        "icons/*.png"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "minimum_chrome_version": "120"
 }
 EOF
 
@@ -71,16 +108,15 @@ cd "$BUILD_DIR/chrome"
 zip -rq "../../$DIST_DIR/verity-lens-chrome-v$VERSION.zip" .
 cd ../..
 
-# Edge 单独 build（带 Edge Add-ons store metadata）
+echo "=== 2. Edge 打包（MV3 + Edge metadata） ==="
 mkdir -p "$BUILD_DIR/edge"
 cp -r "$BUILD_DIR/chrome/"* "$BUILD_DIR/edge/"
 
-# Edge 特定：appx manifest
 cat > "$BUILD_DIR/edge/manifest.edge.json" << 'EOF'
 {
   "packageName": "VerityLens",
   "name": "VerityLens · 真实透镜",
-  "version": "0.2.0",
+  "version": "0.5.0",
   "developer": {
     "name": "hannanlsa",
     "websiteUrl": "https://github.com/hannanlsa/VerityLens"
@@ -92,17 +128,16 @@ cd "$BUILD_DIR/edge"
 zip -rq "../../$DIST_DIR/verity-lens-edge-v$VERSION.zip" .
 cd ../..
 
-echo "=== 2. Firefox 打包（MV2 + browser_specific_settings） ==="
+echo "=== 3. Firefox 打包（MV2 + browser_specific_settings） ==="
 mkdir -p "$BUILD_DIR/firefox"
-cp -r common content popup background options icons "$BUILD_DIR/firefox/"
+cp -r common content popup background options welcome icons "$BUILD_DIR/firefox/"
 
-# Firefox manifest（MV2 + 浏览器特定设置）
 cat > "$BUILD_DIR/firefox/manifest.json" << 'EOF'
 {
   "manifest_version": 2,
   "name": "VerityLens",
-  "version": "0.2.0",
-  "description": "🛡️ 跨模态自校验 × 反虚假信息助手",
+  "version": "0.5.0",
+  "description": "搜索结果真实性标注助手 · 帮你识别广告、SEO农场和可信内容 · 支持6大搜索引擎",
   "author": "hannanlsa",
   "homepage_url": "https://github.com/hannanlsa/VerityLens",
   "icons": {
@@ -122,29 +157,63 @@ cat > "$BUILD_DIR/firefox/manifest.json" << 'EOF'
   "content_scripts": [
     {
       "matches": [
-        "*://www.baidu.com/*",
-        "*://www.so.com/*",
-        "*://www.sogou.com/*",
-        "*://www.google.com/*",
+        "*://www.baidu.com/s*",
+        "*://www.baidu.com/baidu*",
+        "*://www.so.com/s*",
+        "*://www.sogou.com/web*",
+        "*://www.google.com/search*",
         "*://duckduckgo.com/*",
-        "*://www.bing.com/*"
+        "*://www.bing.com/search*"
       ],
-      "js": ["common/verity-core.js", "content/verity-injector.js"],
-      "css": ["content/verity-styles.css"],
-      "run_at": "document_idle"
+      "js": [
+        "common/i18n/i18n-core.js",
+        "common/modules/ocr.js",
+        "common/modules/asr.js",
+        "common/modules/cross-modal.js",
+        "common/verity-core.js",
+        "content/verity-injector.js"
+      ],
+      "css": [
+        "content/verity-styles.css"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "common/modules/translator.js",
+        "common/verity-core.js",
+        "content/verity-translator.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
     }
   ],
-  "permissions": ["storage", "activeTab", "contextMenus", "<all_urls>"],
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "contextMenus",
+    "<all_urls>"
+  ],
   "browser_specific_settings": {
     "gecko": {
       "id": "veritylens@hannanlsa.dev",
-      "strict_min_version": "115.0"
+      "strict_min_version": "120.0"
     }
-  }
+  },
+  "web_accessible_resources": [
+    "common/verity-core.js",
+    "common/modules/*.js",
+    "icons/*.png"
+  ]
 }
 EOF
 
-# Firefox background 脚本（MV2 用 .js 而非 service worker）
 cp background/background.js "$BUILD_DIR/firefox/background/background.js" 2>/dev/null || \
   echo "// Firefox background" > "$BUILD_DIR/firefox/background/background.js"
 
@@ -152,10 +221,7 @@ cd "$BUILD_DIR/firefox"
 zip -rq "../../$DIST_DIR/verity-lens-firefox-v$VERSION.zip" .
 cd ../..
 
-# 输出统计
 echo ""
 echo "=== 打包完成 ==="
 ls -la "$DIST_DIR"/
-
-# 文件大小
 du -sh "$DIST_DIR"/*.zip

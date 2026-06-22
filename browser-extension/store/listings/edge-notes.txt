@@ -1,0 +1,17 @@
+# Edge Add-ons Listing
+
+## 与 Chrome Web Store 共用同一份描述
+## Edge 使用相同的 MV3 manifest，无需额外修改
+## 以下为 Edge 特有字段
+
+## Edge-specific metadata
+- Category: Productivity
+- Language: Chinese (Simplified), English
+- Privacy Policy URL: https://github.com/hannanlsa/VerityLens/blob/main/PRIVACY.md
+- Website: https://github.com/hannanlsa/VerityLens
+- Support: https://github.com/hannanlsa/VerityLens/issues
+
+## Edge 审核注意事项
+- Edge Add-ons 接受与 Chrome Web Store 相同的 zip 包
+- manifest.json 中的 browser_specific_settings.gecko 不影响 Edge 运行
+- Edge 会自动识别 MV3 manifest

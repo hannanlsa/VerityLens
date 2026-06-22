@@ -1,0 +1,49 @@
+.verity-ribbon {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 2px;
+  transition: width 0.2s;
+  z-index: 999998;
+}
+
+.verity-popup {
+  display: none;
+  position: absolute;
+  left: 12px;
+  top: 100%;
+  z-index: 999999;
+  background: #1f2937;
+  color: #f9fafb;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  max-width: 360px;
+  line-height: 1.5;
+}
+
+.verity-popup-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.verity-popup-reasons {
+  font-size: 11px;
+  opacity: 0.85;
+  margin-bottom: 6px;
+}
+
+.verity-popup-reasons div {
+  margin: 2px 0;
+}
+
+.verity-popup-footer {
+  font-size: 10px;
+  opacity: 0.6;
+  border-top: 1px solid #4b5563;
+  padding-top: 4px;
+}

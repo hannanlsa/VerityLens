@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>VerityLens · Test Suite v0.5.0</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Cascadia Code', 'Fira Code', monospace; background: #0f172a; color: #e2e8f0; padding: 20px; }
+    h1 { color: #38bdf8; margin-bottom: 8px; font-size: 20px; }
+    .summary { margin: 12px 0; padding: 12px; background: #1e293b; border-radius: 8px; font-size: 14px; }
+    .summary .pass { color: #22c55e; }
+    .summary .fail { color: #ef4444; }
+    .summary .skip { color: #eab308; }
+    .suite { margin: 16px 0; }
+    .suite-name { color: #818cf8; font-size: 15px; font-weight: bold; margin-bottom: 6px; }
+    .test { padding: 4px 8px; font-size: 13px; border-left: 3px solid transparent; margin: 2px 0; }
+    .test.pass { border-color: #22c55e; color: #86efac; }
+    .test.fail { border-color: #ef4444; color: #fca5a5; }
+    .test.skip { border-color: #eab308; color: #fde047; }
+    .test .error { color: #f87171; font-size: 12px; margin-top: 2px; padding-left: 12px; }
+    #progress { position: fixed; top: 0; left: 0; height: 3px; background: #38bdf8; transition: width 0.3s; z-index: 999; }
+  </style>
+</head>
+<body>
+  <div id="progress" style="width:0%"></div>
+  <h1>VerityLens Test Suite v0.5.0</h1>
+  <div class="summary" id="summary">Running...</div>
+  <div id="results"></div>
+
+  <script src="../common/verity-core.js"></script>
+  <script src="../common/modules/cross-modal.js"></script>
+  <script>
+    const TestRunner = {
+      suites: [],
+      results: { pass: 0, fail: 0, skip: 0, total: 0 },
+
+      suite(name, fn) {
+        this.suites.push({ name, tests: [] });
+        fn();
+      },
+
+      test(name, fn) {
+        const suite = this.suites[this.suites.length - 1];
+        suite.tests.push({ name, fn, status: 'pending', error: null });
+      },
+
+      skip(name) {
+        const suite = this.suites[this.suites.length - 1];
+        suite.tests.push({ name, fn: null, status: 'skip', error: null });
+      },
+
+      assert(condition, message) {
+        if (!condition) throw new Error(message || 'Assertion failed');
+      },
+
+      assertEqual(actual, expected, message) {
+        if (actual !== expected) throw new Error(`${message || ''} Expected "${expected}", got "${actual}"`);
+      },
+
+      assertApprox(actual, expected, delta, message) {
+        if (Math.abs(actual - expected) > delta) throw new Error(`${message || ''} Expected ~${expected}±${delta}, got ${actual}`);
+      },
+
+      assertIncludes(arr, item, message) {
+        if (!arr.includes(item)) throw new Error(`${message || ''} Expected array to include "${item}"`);
+      },
+
+      async run() {
+        const container = document.getElementById('results');
+        const progress = document.getElementById('progress');
+
+        for (const suite of this.suites) {
+          const suiteEl = document.createElement('div');
+          suiteEl.className = 'suite';
+          suiteEl.innerHTML = `<div class="suite-name">${suite.name}</div>`;
+          container.appendChild(suiteEl);
+
+          for (const test of suite.tests) {
+            this.results.total++;
+            const testEl = document.createElement('div');
+
+            if (test.status === 'skip') {
+              this.results.skip++;
+              testEl.className = 'test skip';
+              testEl.textContent = `⊘ ${test.name}`;
+            } else {
+              try {
+                await test.fn();
+                test.status = 'pass';
+                this.results.pass++;
+                testEl.className = 'test pass';
+                testEl.textContent = `✓ ${test.name}`;
+              } catch (err) {
+                test.status = 'fail';
+                this.results.fail++;
+                testEl.className = 'test fail';
+                testEl.innerHTML = `✗ ${test.name}<div class="error">${err.message}</div>`;
+              }
+            }
+
+            suiteEl.appendChild(testEl);
+            progress.style.width = `${(this.results.total / this.getTotalTests()) * 100}%`;
+          }
+        }
+
+        const s = this.results;
+        document.getElementById('summary').innerHTML =
+          `Total: ${s.total} | <span class="pass">Pass: ${s.pass}</span> | <span class="fail">Fail: ${s.fail}</span> | <span class="skip">Skip: ${s.skip}</span>`;
+      },
+
+      getTotalTests() {
+        return this.suites.reduce((sum, s) => sum + s.tests.length, 0);
+      }
+    };
+
+    const { suite, test, skip, assert, assertEqual, assertApprox, assertIncludes } = TestRunner;
+
+    suite('VerityCore · 基础属性', () => {
+      test('VERSION 应为 0.5.0', () => {
+        assertEqual(VerityCore.VERSION, '0.5.0');
+      });
+
+      test('5 级置信度常量完整', () => {
+        assertEqual(VerityCore.CONFIDENCE.HIGH, 'high');
+        assertEqual(VerityCore.CONFIDENCE.MEDIUM, 'medium');
+        assertEqual(VerityCore.CONFIDENCE.ABNORMAL, 'abnormal');
+        assertEqual(VerityCore.CONFIDENCE.PARTIAL, 'partial_X');
+        assertEqual(VerityCore.CONFIDENCE.UNVERIFIED, 'unverified');
+      });
+
+      test('4 种通道模式完整', () => {
+        assertEqual(VerityCore.MODE.LOCAL, 'local');
+        assertEqual(VerityCore.MODE.SMART, 'smart');
+        assertEqual(VerityCore.MODE.CLOUD, 'cloud');
+        assertEqual(VerityCore.MODE.DOCKER, 'docker');
+      });
+
+      test('5 种颜色映射完整', () => {
+        assertEqual(VerityCore.COLORS.high, '#22c55e');
+        assertEqual(VerityCore.COLORS.abnormal, '#ef4444');
+        assertEqual(VerityCore.COLORS.unverified, '#9ca3af');
+      });
+    });
+
+    suite('VerityCore · textHeuristic 本地启发式', () => {
+      test('空文本返回 0', () => {
+        assertEqual(VerityCore.textHeuristic(''), 0);
+      });
+
+      test('政府/教育/组织域名加分', () => {
+        const gov = VerityCore.textHeuristic('参考 https://www.gov.cn/article 和 https://edu.cn/paper');
+        assert(gov > 0.5, 'gov/edu 文本分数应 > 0.5');
+      });
+
+      test('权威来源加分', () => {
+        const wiki = VerityCore.textHeuristic('根据 Wikipedia 的描述和 github 上的源码');
+        assert(wiki > 0.5, 'wikipedia/github 文本分数应 > 0.5');
+      });
+
+      test('广告关键词减分', () => {
+        const ad = VerityCore.textHeuristic('限时特惠秒杀，立即购买，点击下载app');
+        assert(ad < 0.3, '广告文本分数应 < 0.3');
+      });
+
+      test('推广/赞助关键词减分', () => {
+        const sponsored = VerityCore.textHeuristic('赞助内容推广广告，限时优惠打折');
+        assert(sponsored < 0.1, '赞助文本分数应 < 0.1');
+      });
+
+      test('混合内容中等分数', () => {
+        const mixed = VerityCore.textHeuristic('这是一篇关于 Python 编程的博客文章，包含代码示例和教程');
+        assert(mixed >= 0.3 && mixed <= 0.8, '普通博客文本分数应在 0.3-0.8');
+      });
+    });
+
+    suite('VerityCore · fuzzyMatch 模糊匹配', () => {
+      test('完全相同返回 1', () => {
+        assertEqual(VerityCore.fuzzyMatch('hello world', 'hello world'), 1);
+      });
+
+      test('完全不同返回 0', () => {
+        assertEqual(VerityCore.fuzzyMatch('abc', 'xyz'), 0);
+      });
+
+      test('部分重叠返回中间值', () => {
+        const score = VerityCore.fuzzyMatch('hello world foo', 'hello world bar');
+        assert(score > 0.5, '部分重叠分数应 > 0.5');
+        assert(score < 1, '部分重叠分数应 < 1');
+      });
+
+      test('空输入返回 0', () => {
+        assertEqual(VerityCore.fuzzyMatch('', 'hello'), 0);
+        assertEqual(VerityCore.fuzzyMatch('hello', ''), 0);
+        assertEqual(VerityCore.fuzzyMatch('', ''), 0);
+      });
+
+      test('大小写不敏感', () => {
+        assertEqual(VerityCore.fuzzyMatch('Hello World', 'hello world'), 1);
+      });
+    });
+
+    suite('VerityCore · scoreToConfidence 分数映射', () => {
+      test('score >= 0.85 → high', () => {
+        assertEqual(VerityCore.scoreToConfidence(0.85), 'high');
+        assertEqual(VerityCore.scoreToConfidence(1.0), 'high');
+      });
+
+      test('0.65 <= score < 0.85 → medium', () => {
+        assertEqual(VerityCore.scoreToConfidence(0.65), 'medium');
+        assertEqual(VerityCore.scoreToConfidence(0.75), 'medium');
+      });
+
+      test('0.4 <= score < 0.65 → partial_X', () => {
+        assertEqual(VerityCore.scoreToConfidence(0.4), 'partial_X');
+        assertEqual(VerityCore.scoreToConfidence(0.5), 'partial_X');
+      });
+
+      test('0.2 <= score < 0.4 → abnormal', () => {
+        assertEqual(VerityCore.scoreToConfidence(0.2), 'abnormal');
+        assertEqual(VerityCore.scoreToConfidence(0.3), 'abnormal');
+      });
+
+      test('score < 0.2 → unverified', () => {
+        assertEqual(VerityCore.scoreToConfidence(0.0), 'unverified');
+        assertEqual(VerityCore.scoreToConfidence(0.1), 'unverified');
+      });
+    });
+
+    suite('VerityCore · crossValidate 交叉验证（无 ASR/OCR）', () => {
+      test('纯文本返回本地启发式结果', async () => {
+        const result = await VerityCore.crossValidate(null, null, '参考 Wikipedia 的技术文档');
+        assertEqual(result.channel, 'local');
+        assert(result.score > 0, '纯文本分数应 > 0');
+        assert(result.reasons.length > 0, '应有原因说明');
+      });
+
+      test('空文本返回低分', async () => {
+        const result = await VerityCore.crossValidate(null, null, '');
+        assert(result.score <= 0.1, '空文本分数应极低');
+      });
+    });
+
+    suite('VerityCore · crossValidate 交叉验证（含 ASR）', () => {
+      test('ASR 高匹配度 → 加分', async () => {
+        const asrResult = { text: 'Python 编程教程 入门指南', confidence: 0.9 };
+        const result = await VerityCore.crossValidate(asrResult, null, 'Python 编程教程 入门指南');
+        assert(result.score > 0.5, 'ASR 高匹配分数应 > 0.5');
+      });
+
+      test('ASR 低匹配度 → 减分', async () => {
+        const asrResult = { text: '限时优惠打折促销', confidence: 0.9 };
+        const result = await VerityCore.crossValidate(asrResult, null, 'Python 编程教程 入门指南');
+        assert(result.score < 0.5, 'ASR 低匹配分数应 < 0.5');
+      });
+    });
+
+    suite('VerityCore · crossValidate 交叉验证（含 OCR）', () => {
+      test('OCR 高匹配度 → 加分', async () => {
+        const ocrResult = { text: '官方文档 技术规范', confidence: 0.85 };
+        const result = await VerityCore.crossValidate(null, ocrResult, '官方文档 技术规范');
+        assert(result.score > 0.5, 'OCR 高匹配分数应 > 0.5');
+      });
+    });
+
+    suite('MODEL_REGISTRY · 模型注册表', () => {
+      test('9 家提供商 + custom', () => {
+        const providers = MODEL_REGISTRY.getAllProviders();
+        assertEqual(providers.length, 9);
+      });
+
+      test('所有提供商有免费模型', () => {
+        const free = MODEL_REGISTRY.getFreeProviders();
+        assert(free.length >= 9, '至少 9 家有免费模型');
+      });
+
+      test('getProvider 返回正确提供商', () => {
+        const ds = MODEL_REGISTRY.getProvider('deepseek');
+        assert(ds !== undefined, 'deepseek 应存在');
+        assertEqual(ds.name, 'DeepSeek');
+        assert(ds.models.length >= 2, 'DeepSeek 至少 2 个模型');
+      });
+
+      test('getProvider(custom) 不在 getAllProviders 中', () => {
+        const providers = MODEL_REGISTRY.getAllProviders();
+        const hasCustom = providers.some(p => p.id === 'custom');
+        assert(!hasCustom, 'custom 不应出现在 getAllProviders');
+      });
+
+      test('getProvider(不存在) 返回 undefined', () => {
+        assertEqual(MODEL_REGISTRY.getProvider('nonexistent'), undefined);
+      });
+    });
+
+    suite('SmartRouter · 复杂度评估', () => {
+      test('短文本 → light', () => {
+        const result = SmartRouter.assessComplexity('短文本');
+        assertEqual(result.level, 'light');
+      });
+
+      test('长文本 + 多结果 → medium', () => {
+        const result = SmartRouter.assessComplexity('x'.repeat(600), { resultCount: 6 });
+        assert(result.level === 'medium' || result.level === 'heavy', '长文本+多结果应为 medium 或 heavy');
+      });
+
+      test('含媒体 → medium+', () => {
+        const result = SmartRouter.assessComplexity('文本', { hasMedia: true });
+        assert(result.level === 'medium' || result.level === 'heavy', '含媒体应为 medium 或 heavy');
+      });
+
+      test('跨模态 → 加分', () => {
+        const normal = SmartRouter.assessComplexity('文本');
+        const cross = SmartRouter.assessComplexity('文本', { crossModal: true });
+        assert(cross.score > normal.score, '跨模态分数应高于普通');
+      });
+    });
+
+    suite('CrossModalVerifier · 实体提取', () => {
+      test('提取 URL', () => {
+        const entities = CrossModalVerifier.extractEntities('访问 https://example.com 了解更多');
+        const urls = entities.filter(e => e.type === 'url');
+        assert(urls.length >= 1, '应提取到 URL');
+        assertIncludes(urls.map(e => e.value), 'https://example.com');
+      });
+
+      test('提取邮箱', () => {
+        const entities = CrossModalVerifier.extractEntities('联系 admin@example.com');
+        const emails = entities.filter(e => e.type === 'email');
+        assert(emails.length >= 1, '应提取到邮箱');
+      });
+
+      test('提取手机号', () => {
+        const entities = CrossModalVerifier.extractEntities('致电 13800138000');
+        const phones = entities.filter(e => e.type === 'phone');
+        assert(phones.length >= 1, '应提取到手机号');
+      });
+
+      test('提取日期', () => {
+        const entities = CrossModalVerifier.extractEntities('2024年12月25日发布');
+        const dates = entities.filter(e => e.type === 'date');
+        assert(dates.length >= 1, '应提取到日期');
+      });
+
+      test('提取组织', () => {
+        const entities = CrossModalVerifier.extractEntities('华为公司和中国科学院大学合作');
+        const orgs = entities.filter(e => e.type === 'org');
+        assert(orgs.length >= 1, '应提取到组织');
+      });
+
+      test('提取人物', () => {
+        const entities = CrossModalVerifier.extractEntities('张教授和李博士发表了论文');
+        const persons = entities.filter(e => e.type === 'person');
+        assert(persons.length >= 1, '应提取到人物');
+      });
+
+      test('空文本返回空数组', () => {
+        const entities = CrossModalVerifier.extractEntities('');
+        assertEqual(entities.length, 0);
+      });
+
+      test('多类型混合提取', () => {
+        const text = '2024年1月15日，张教授在 admin@pku.edu.cn 发布了 https://arxiv.org/paper';
+        const entities = CrossModalVerifier.extractEntities(text);
+        const types = new Set(entities.filter(e => e.type !== 'keyword').map(e => e.type));
+        assert(types.size >= 3, '应提取到至少 3 种类型');
+      });
+    });
+
+    suite('CrossModalVerifier · 实体链接', () => {
+      test('相同实体精确链接', () => {
+        const a = CrossModalVerifier.extractEntities('联系 admin@example.com');
+        const b = CrossModalVerifier.extractEntities('邮箱 admin@example.com');
+        const links = CrossModalVerifier.linkEntities(a, b);
+        assert(links.length >= 1, '应有实体链接');
+        assertEqual(links[0].matchType, 'exact');
+      });
+
+      test('无共同实体返回空', () => {
+        const a = [{ type: 'url', value: 'https://a.com', position: 0 }];
+        const b = [{ type: 'url', value: 'https://b.com', position: 0 }];
+        const links = CrossModalVerifier.linkEntities(a, b);
+        assertEqual(links.length, 0);
+      });
+
+      test('大小写不敏感链接', () => {
+        const a = [{ type: 'email', value: 'Admin@Example.COM', position: 0 }];
+        const b = [{ type: 'email', value: 'admin@example.com', position: 0 }];
+        const links = CrossModalVerifier.linkEntities(a, b);
+        assert(links.length >= 1, '大小写不同应仍能链接');
+      });
+    });
+
+    suite('CrossModalVerifier · verify 跨模态验证', () => {
+      test('纯文本 → 启发式评分', async () => {
+        const result = await CrossModalVerifier.verify('参考 Wikipedia 的技术文档', null, null);
+        assert(result.score > 0, '纯文本分数应 > 0');
+        assertEqual(result.channel, 'cross-modal');
+        assert(result.reasons.length > 0, '应有原因');
+      });
+
+      test('ASR + 文本 → 双模态', async () => {
+        const asr = { text: 'Python 编程教程', confidence: 0.9 };
+        const result = await CrossModalVerifier.verify('Python 编程教程', asr, null);
+        assert(result.modalityCount >= 2, '应为双模态');
+        assert(result.timeline.length >= 1, '应有时间轴记录');
+      });
+
+      test('ASR + OCR + 文本 → 三元组', async () => {
+        const asr = { text: 'Python 编程教程 入门', confidence: 0.9 };
+        const ocr = { text: 'Python 编程教程 入门', confidence: 0.85 };
+        const result = await CrossModalVerifier.verify('Python 编程教程 入门指南', asr, ocr);
+        assertEqual(result.modalityCount, 3);
+        assert(result.timeline.length >= 2, '应有 2 条时间轴记录');
+      });
+
+      test('ASR-OCR 跨模态一致性加分', async () => {
+        const asr = { text: '官方公告 2024年1月1日', confidence: 0.9 };
+        const ocr = { text: '官方公告 2024年1月1日', confidence: 0.85 };
+        const result = await CrossModalVerifier.verify('官方公告 2024年1月1日', asr, ocr);
+        const hasCrossConsistency = result.reasons.some(r => r.includes('ASR-OCR'));
+        assert(hasCrossConsistency, '应有 ASR-OCR 跨模态一致性说明');
+      });
+
+      test('reset 清空缓存', () => {
+        CrossModalVerifier.entityCache.set('test', 'value');
+        CrossModalVerifier.timeline.push({ test: true });
+        CrossModalVerifier.reset();
+        assertEqual(CrossModalVerifier.entityCache.size, 0);
+        assertEqual(CrossModalVerifier.timeline.length, 0);
+      });
+    });
+
+    suite('Channel · parseLLMResponse LLM 响应解析', () => {
+      test('标准 JSON 解析', () => {
+        const result = Channel.parseLLMResponse('{"confidence":"high","score":0.9,"reasons":["可信来源"]}', 'test-model');
+        assertEqual(result.confidence, 'high');
+        assertApprox(result.score, 0.9, 0.01);
+        assertEqual(result.channel, 'cloud');
+        assertEqual(result.model, 'test-model');
+      });
+
+      test('JSON 嵌入在文本中', () => {
+        const result = Channel.parseLLMResponse('分析结果如下：\n{"confidence":"medium","score":0.6,"reasons":["部分可信"]}\n以上是评估');
+        assertEqual(result.confidence, 'medium');
+      });
+
+      test('无效 JSON → unverified', () => {
+        const result = Channel.parseLLMResponse('这不是JSON格式');
+        assertEqual(result.confidence, 'unverified');
+      });
+
+      test('score 超出范围 → 截断', () => {
+        const result = Channel.parseLLMResponse('{"confidence":"high","score":1.5,"reasons":["test"]}');
+        assert(result.score <= 1, 'score 应 <= 1');
+      });
+
+      test('缺少 reasons → 默认', () => {
+        const result = Channel.parseLLMResponse('{"confidence":"high","score":0.9}');
+        assert(result.reasons.length > 0, '应有默认 reasons');
+      });
+    });
+
+    TestRunner.run();
+  </script>
+</body>
+</html>

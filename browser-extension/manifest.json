@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "VerityLens",
-  "version": "0.3.0",
-  "description": "🛡️ 跨模态自校验 × 反虚假信息助手 · 双通道智能路由 + 三元组交叉验证",
+  "version": "0.5.0",
+  "description": "搜索结果真实性标注助手 · 帮你识别广告、SEO农场和可信内容 · 支持6大搜索引擎",
   "author": "hannanlsa",
   "homepage_url": "https://github.com/hannanlsa/VerityLens",
 
@@ -41,6 +41,7 @@
         "*://www.bing.com/search*"
       ],
       "js": [
+        "common/i18n/i18n-core.js",
         "common/modules/ocr.js",
         "common/modules/asr.js",
         "common/modules/cross-modal.js",
@@ -49,6 +50,16 @@
       ],
       "css": [
         "content/verity-styles.css"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "common/modules/translator.js",
+        "common/verity-core.js",
+        "content/verity-translator.js"
       ],
       "run_at": "document_idle",
       "all_frames": false
@@ -65,21 +76,7 @@
   ],
 
   "host_permissions": [
-    "*://www.baidu.com/*",
-    "*://www.so.com/*",
-    "*://www.sogou.com/*",
-    "*://www.google.com/*",
-    "*://duckduckgo.com/*",
-    "*://www.bing.com/*",
-    "*://api.deepseek.com/*",
-    "*://open.bigmodel.cn/*",
-    "*://dashscope.aliyuncs.com/*",
-    "*://api.siliconflow.cn/*",
-    "*://api.groq.com/*",
-    "*://api.moonshot.cn/*",
-    "*://api.minimax.chat/*",
-    "*://api.lingyiwanwu.com/*",
-    "*://aip.baidubce.com/*"
+    "<all_urls>"
   ],
 
   "web_accessible_resources": [
@@ -87,6 +84,7 @@
       "resources": [
         "common/verity-core.js",
         "common/modules/*.js",
+        "common/i18n/*.json",
         "icons/*.png"
       ],
       "matches": ["<all_urls>"]

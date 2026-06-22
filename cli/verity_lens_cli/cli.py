@@ -1,4 +1,4 @@
-"""VerityLens CLI · 真实透镜命令行工具 v0.4.0"""
+"""VerityLens CLI · 真实透镜命令行工具 v0.5.0"""
 
 import json
 import re
@@ -156,14 +156,14 @@ def render_result(result: dict):
     console.print(Panel(
         f"[{color}][bold]{label} {score * 100:.0f}%[/{color}][/bold]\n\n"
         + "\n".join(f"  {r}" for r in reasons)
-        + f"\n\n[dim]{channel_label} · VerityLens v0.4.0[/]",
+        + f"\n\n[dim]{channel_label} · VerityLens v0.5.0[/]",
         title="🛡️ 验证结果",
         border_style=color,
     ))
 
 
 @click.group()
-@click.version_option("0.4.0", prog_name="verity")
+@click.version_option("0.5.0", prog_name="verity")
 def main():
     """🛡️ VerityLens CLI · 真实透镜命令行工具"""
     pass

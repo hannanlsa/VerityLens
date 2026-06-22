@@ -1,6 +1,6 @@
 [package]
 name = "verity-lens"
-version = "0.4.0"
+version = "0.5.0"
 description = "VerityLens · 真实透镜 · 桌面助手"
 authors = ["hannanlsa"]
 edition = "2021"
@@ -14,6 +14,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 reqwest = { version = "0.12", features = ["json"] }
 tokio = { version = "1", features = ["full"] }
+regex-lite = "0.1"
 
 [lib]
 name = "verity_lens_lib"
