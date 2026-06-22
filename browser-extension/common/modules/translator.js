@@ -1,5 +1,5 @@
 /**
- * VerityLens · Translator Module · 双语翻译核心（v0.6.0）
+ * VerityLens · Translator Module · 双语翻译核心（v0.6.1）
  *
  * 联合国六大工作语言互译：
  * - 中文(zh) · 英文(en) · 法文(fr) · 西文(es) · 俄文(ru) · 阿拉伯文(ar)
@@ -8,7 +8,7 @@
  */
 
 const VerityTranslator = {
-  VERSION: '0.6.0',
+  VERSION: '0.6.1',
 
   LANG_NAMES: {
     zh: '中文',
@@ -149,11 +149,20 @@ const VerityTranslator = {
 
     return `你是专业翻译。将以下${srcName}段落翻译为${tgtName}。
 
-严格要求：
-1. 每段翻译前保留编号 [n]
-2. 翻译要准确、自然、符合${tgtName}表达习惯
+严格格式要求：
+1. 每段翻译独占一行，格式: [编号] 翻译内容|置信度
+2. 置信度为0.0~1.0的小数，表示你对这段翻译准确性的把握
+   - 0.9~1.0: 非常有把握，术语准确，语意完整
+   - 0.7~0.9: 基本准确，个别表述可能不够地道
+   - 0.5~0.7: 大致意思对，但细节可能有偏差
+   - 0.0~0.5: 不确定，可能存在明显误译
 3. 保留专业术语的原文（括号标注）
-4. 不要添加解释或注释
+4. 不要合并或拆分段落
+5. 不要添加解释
+
+示例:
+[1] 维基百科是一个在线百科全书|0.95
+[2] 该组织成立于1945年|0.88
 
 ${numberedTexts.join('\n')}`;
   },
@@ -208,8 +217,9 @@ ${numberedTexts.join('\n')}`;
     const systemPrompt = `你是专业翻译。将以下${srcName}段落翻译为${tgtName}。
 
 严格格式要求：
-- 每段翻译独占一行
-- 行首格式: [编号] 翻译内容
+- 每段翻译独占一行，格式: [编号] 翻译内容|置信度
+- 置信度为0.0~1.0的小数，表示你对这段翻译准确性的把握
+  0.9~1.0: 非常有把握  0.7~0.9: 基本准确  0.5~0.7: 可能有偏差  0.0~0.5: 不确定
 - 编号必须与原文一致
 - 翻译准确自然，保留专业术语原文（括号标注）
 - 不要合并或拆分段落
@@ -252,12 +262,30 @@ ${numberedTexts.join('\n')}`;
     const results = {};
     if (!response) return results;
 
-    const matches = response.matchAll(/\[(\d+)\]\s*([\s\S]*?)(?=\[\d+\]|$)/g);
+    const matches = response.matchAll(/\[(\d+)\]\s*([\s\S]*?)\|(\d+\.?\d*)\s*(?=\[\d+\]|$)/g);
     for (const match of matches) {
       const num = parseInt(match[1]);
       const text = match[2].trim();
+      const confidence = parseFloat(match[3]);
       if (num > 0 && text) {
-        results[num] = text;
+        results[num] = { text, confidence: Math.min(1, Math.max(0, confidence || 0.5)) };
+      }
+    }
+
+    if (Object.keys(results).length === 0) {
+      const fallbackMatches = response.matchAll(/\[(\d+)\]\s*([\s\S]*?)(?=\[\d+\]|$)/g);
+      for (const match of fallbackMatches) {
+        const num = parseInt(match[1]);
+        let text = match[2].trim();
+        const pipeMatch = text.match(/^(.+)\|(\d+\.?\d*)$/);
+        let confidence = 0.5;
+        if (pipeMatch) {
+          text = pipeMatch[1].trim();
+          confidence = parseFloat(pipeMatch[2]);
+        }
+        if (num > 0 && text) {
+          results[num] = { text, confidence: Math.min(1, Math.max(0, confidence || 0.5)) };
+        }
       }
     }
 
@@ -266,7 +294,14 @@ ${numberedTexts.join('\n')}`;
       for (const line of lines) {
         const m = line.match(/^\[(\d+)\]\s*(.+)/);
         if (m) {
-          results[parseInt(m[1])] = m[2].trim();
+          let text = m[2].trim();
+          let confidence = 0.5;
+          const pm = text.match(/^(.+)\|(\d+\.?\d*)$/);
+          if (pm) {
+            text = pm[1].trim();
+            confidence = parseFloat(pm[2]);
+          }
+          results[parseInt(m[1])] = { text, confidence: Math.min(1, Math.max(0, confidence || 0.5)) };
         }
       }
     }
@@ -274,22 +309,78 @@ ${numberedTexts.join('\n')}`;
     return results;
   },
 
-  insertTranslation(element, translatedText, targetLang) {
+  localConfidenceCheck(original, translated, llmConfidence) {
+    let score = llmConfidence || 0.5;
+
+    if (!translated || translated.length < 2) return 0.1;
+
+    const origLen = original.length;
+    const transLen = translated.length;
+    const ratio = transLen / Math.max(origLen, 1);
+    if (ratio < 0.2 || ratio > 5.0) score *= 0.6;
+
+    const origNumbers = (original.match(/\d+/g) || []).join('');
+    const transNumbers = (translated.match(/\d+/g) || []).join('');
+    if (origNumbers && origNumbers !== transNumbers) score *= 0.7;
+
+    const origProperNouns = (original.match(/[A-Z][a-z]+(?:\s[A-Z][a-z]+)*/g) || []);
+    for (const pn of origProperNouns) {
+      if (!translated.includes(pn)) score *= 0.9;
+    }
+
+    if (translated.includes('[翻译失败]') || translated.includes('需配置API')) score = 0.1;
+
+    return Math.min(1, Math.max(0, score));
+  },
+
+  confidenceStyle(confidence) {
+    if (confidence >= 0.8) {
+      return { border: '#22c55e', label: '✓ 可信', bg: 'rgba(34,197,94,0.08)' };
+    } else if (confidence >= 0.5) {
+      return { border: '#eab308', label: '⚠ 一般', bg: 'rgba(234,179,8,0.08)' };
+    } else {
+      return { border: '#ef4444', label: '✗ 存疑', bg: 'rgba(239,68,68,0.08)' };
+    }
+  },
+
+  insertTranslation(element, translatedText, targetLang, confidence) {
     if (element.dataset.verityTranslated) return;
 
     const isRTL = this.RTL_LANGS.includes(targetLang);
+    const cStyle = this.confidenceStyle(confidence || 0.5);
 
     const translationDiv = document.createElement('div');
     translationDiv.className = 'verity-translate';
     translationDiv.dir = isRTL ? 'rtl' : 'ltr';
-    translationDiv.textContent = translatedText;
+
+    const badge = document.createElement('span');
+    badge.style.cssText = `
+      display: inline-block;
+      font-size: 10px;
+      font-style: normal;
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin-right: 4px;
+      font-weight: 600;
+      vertical-align: middle;
+      color: ${cStyle.border};
+      background: ${cStyle.bg};
+    `;
+    badge.textContent = `${cStyle.label} ${(confidence || 0.5).toFixed(1)}`;
+
+    const textSpan = document.createElement('span');
+    textSpan.textContent = translatedText;
+
+    translationDiv.appendChild(badge);
+    translationDiv.appendChild(textSpan);
     translationDiv.style.cssText = `
       color: #6b7280;
       font-size: 0.9em;
       line-height: 1.6;
       margin-top: 2px;
       padding-left: 8px;
-      border-left: 2px solid #22c55e;
+      border-left: 2px solid ${cStyle.border};
+      background: ${cStyle.bg};
       font-style: italic;
     `;
 
@@ -334,30 +425,35 @@ ${numberedTexts.join('\n')}`;
             );
           } else {
             for (let j = 0; j < toTranslate.length; j++) {
-              apiResults[j + 1] = `[${this.LANG_NAMES[sourceLang] || sourceLang} → ${this.LANG_NAMES[targetLang] || targetLang} 需要云端翻译]`;
+              apiResults[j + 1] = { text: `[${this.LANG_NAMES[sourceLang] || sourceLang} → ${this.LANG_NAMES[targetLang] || targetLang} 需要云端翻译]`, confidence: 0.1 };
             }
           }
         } catch {
           for (let j = 0; j < toTranslate.length; j++) {
-            apiResults[j + 1] = `[翻译失败，请重试]`;
+            apiResults[j + 1] = { text: `[翻译失败，请重试]`, confidence: 0.1 };
           }
         }
 
         for (let j = 0; j < toTranslate.length; j++) {
-          const translated = apiResults[j + 1];
+          const result = apiResults[j + 1];
           const origIdx = toTranslateIndices[j] + 1;
-          if (translated) {
-            translations[origIdx] = translated;
+          if (result) {
+            const translatedText = typeof result === 'string' ? result : result.text;
+            const llmConf = typeof result === 'string' ? 0.5 : result.confidence;
+            const finalConf = this.localConfidenceCheck(toTranslate[j], translatedText, llmConf);
+            translations[origIdx] = { text: translatedText, confidence: finalConf };
             const key = this._cacheKey(toTranslate[j], sourceLang, targetLang);
-            this._cache[key] = translated;
+            this._cache[key] = { text: translatedText, confidence: finalConf };
           }
         }
       }
 
       for (let i = 0; i < batch.length; i++) {
-        const translated = translations[i + 1];
-        if (translated) {
-          this.insertTranslation(batch[i], translated, targetLang);
+        const result = translations[i + 1];
+        if (result) {
+          const translatedText = typeof result === 'string' ? result : result.text;
+          const confidence = typeof result === 'string' ? 0.5 : result.confidence;
+          this.insertTranslation(batch[i], translatedText, targetLang, confidence);
           translatedCount++;
         }
       }

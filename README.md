@@ -1,11 +1,11 @@
 # VerityLens（真实透镜）
 
-> 🛡️ 跨模态自校验 × 反虚假信息助手
-> A cross-modal fact-checking assistant for the post-truth era.
+> 🛡️ 信息可信度标注（来源大数据AI）
+> A credibility annotation assistant powered by big data AI.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
 [![Status: v0.6.0](https://img.shields.io/badge/Status-v0.6.0-green)](CHANGELOG.md)
-[![Patent: Pending](https://img.shields.io/badge/Patent-Pending-red)](PATENT_PENDING.md)
+
 
 ## ✨ 项目定位
 
@@ -135,17 +135,15 @@ verity-lens/
 - 冷门端口：61593（API）、63257（Ollama）
 - 适合在自有电脑或NAS上搭建，数据完全不出你的网络
 
-## 🤝 共享专利池
+## 🤝 原创算法
 
-VerityLens 与 WhisperArchive 共享 **5 件专利**：
+VerityLens 采用以下原创算法：
 
-| # | 专利 | WhisperArchive | VerityLens |
-|---|---|---|---|
-| 1.1 | 跨模态自校验框架 | ✅ 核心 | ✅ 核心 |
-| 2.2 | 心理画像生成器 | ✅ 9 类 | ⚪️ 暂不需要 |
-| 3 | 跨模态假新闻检测 | ✅ 自用 | ✅ 核心 |
-| 4 | 长期追踪 | ✅ 跨年 | ⚪️ 暂不需要 |
-| 5 | AIGC 多模态检测 | ✅ 本地 | ✅ 防御 |
+| # | 算法 | 用途 |
+|---|---|---|
+| 1 | 跨模态自校验框架 | ✅ 核心（ASR + OCR + 文本三元组） |
+| 2 | 搜索结果可信度标注 | ✅ 核心（5级置信度 + DOM注入） |
+| 3 | 双语翻译置信度补位 | ✅ 核心（LLM自评 + 本地校验） |
 
 ##  仓库状态
 
@@ -194,8 +192,7 @@ VerityLens 与 WhisperArchive 共享 **5 件专利**：
 ## 📜 协议
 
 - **代码**：AGPL-3.0
-- **专利**：专利申请中（共享 WhisperArchive 5 件）
-- **商标**：VerityLens 商标申请中
+- **算法**：原创算法（详见 PATENT_PENDING.md）
 - **隐私**：本地优先 + 零数据收集 + 用户自选通道
 
 ## 🙏 致谢

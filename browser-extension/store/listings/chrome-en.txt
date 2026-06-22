@@ -4,13 +4,13 @@
 VerityLens
 
 ## Short Description (132 chars max)
-Fact-checking assistant for search results. Identify ads, SEO farms, and credible content across 6 search engines.
+Credibility annotation assistant for search results + bilingual page translation. Identify ads, SEO farms, and credible content across 6 search engines.
 
 ## Detailed Description
 
 🛡️ VerityLens — Your Truth Lens for Search Results
 
-Automatically annotate the credibility of every search result, helping you spot ads, SEO farms, and trustworthy content at a glance.
+Automatically annotate the credibility of every search result, helping you spot ads, SEO farms, and trustworthy content at a glance. Annotations are based on big data AI analysis and are for reference only.
 
 🔍 Supported Search Engines
 Baidu · 360 Search · Sogou · Google · Bing · DuckDuckGo
@@ -41,6 +41,11 @@ If you have a GPU and Docker, run your own AI model on your PC or NAS:
 • Fully private — data never leaves your network
 • Supports Ollama + Qwen2.5 and other open-source models
 • See project docs for Docker deployment guide
+
+🌐 Bilingual Translation (Emergency)
+• One-click side-by-side translation for foreign-language pages
+• Supports 6 UN official languages: Chinese/English/French/Spanish/Russian/Arabic
+• ⚠️ If the website has an official language switch, please use that first. This translation is for emergency use only.
 
 🧠 Smart Features
 • Auto-detect ad/marketing/SEO characteristics in search results

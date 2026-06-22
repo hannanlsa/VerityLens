@@ -1,5 +1,5 @@
 /**
- * VerityLens · Translator Content Script · 双语翻译注入（v0.6.0）
+ * VerityLens · Translator Content Script · 双语翻译注入（v0.6.1）
  *
  * 检测页面语言 → 自动翻译为用户目标语言 → 原文下方插入译文
  * 联合国六大工作语言：zh/en/fr/es/ru/ar

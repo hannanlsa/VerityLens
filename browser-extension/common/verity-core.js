@@ -6,7 +6,7 @@
  * - 云端通道：DeepSeek / 智谱GLM / 通义千问 / 硅基流动 / Groq 等（用户自填Key）
  * - Docker通道：用户自建 Ollama（OpenAI兼容接口）
  * - 智能路由：轻量→本地，复杂→云端，自动选最快可用模型
- * - 跨模态：ASR + OCR + 文本三元组交叉验证（专利 1.1）
+ * - 跨模态：ASR + OCR + 文本三元组交叉验证（原创算法）
  *
  * 5 级置信度（high / medium / abnormal / partial_X / unverified）
  */

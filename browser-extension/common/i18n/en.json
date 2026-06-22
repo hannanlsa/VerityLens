@@ -1,6 +1,6 @@
 {
   "app_name": "VerityLens",
-  "app_desc": "Cross-Modal Self-Verification × Anti-Disinformation Assistant",
+  "app_desc": "Credibility Annotation (Powered by Big Data AI)",
   "confidence_high": "High",
   "confidence_medium": "Medium",
   "confidence_abnormal": "Abnormal",
@@ -54,7 +54,7 @@
   "verify_cloud_fallback": "⚠️ Cloud unavailable, fallback to local",
   "verify_cloud_failed": "⚠️ Cloud failed ({error}), fallback to local",
   "welcome_title": "Welcome to VerityLens",
-  "welcome_subtitle": "Cross-Modal Self-Verification × Anti-Disinformation Assistant",
+  "welcome_subtitle": "Credibility Annotation (Powered by Big Data AI)",
   "welcome_step1_title": "Choose Channel Mode",
   "welcome_step1_desc": "Smart Switch recommended — lightweight tasks go local, complex tasks go cloud",
   "welcome_step2_title": "Configure Free Model",

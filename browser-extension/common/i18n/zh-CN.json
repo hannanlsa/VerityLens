@@ -1,6 +1,6 @@
 {
   "app_name": "VerityLens · 真实透镜",
-  "app_desc": "跨模态自校验 × 反虚假信息助手",
+  "app_desc": "信息可信度标注（来源大数据AI）",
   "confidence_high": "高置信",
   "confidence_medium": "中等",
   "confidence_abnormal": "异常",
@@ -54,7 +54,7 @@
   "verify_cloud_fallback": "⚠️ 云端不可用，回退本地",
   "verify_cloud_failed": "⚠️ 云端失败({error})，回退本地",
   "welcome_title": "欢迎使用 VerityLens",
-  "welcome_subtitle": "跨模态自校验 × 反虚假信息助手",
+  "welcome_subtitle": "信息可信度标注（来源大数据AI）",
   "welcome_step1_title": "选择通道模式",
   "welcome_step1_desc": "推荐使用智能切换模式，轻量任务走本地，复杂任务走云端",
   "welcome_step2_title": "配置免费模型",

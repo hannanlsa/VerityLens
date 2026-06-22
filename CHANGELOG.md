@@ -7,10 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.0] - 2026-06-22
 
-### ⚠️ PATENT PENDING
-
-> This release contains patent-pending technology (shared with WhisperArchive).
-> Unauthorized reproduction, distribution, or public disclosure is prohibited.
 
 ### Added
 
@@ -61,10 +57,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.0] - 2026-06-22
 
-### ⚠️ PATENT PENDING
-
-> This release contains patent-pending technology (shared with WhisperArchive).
-> Unauthorized reproduction, distribution, or public disclosure is prohibited.
 
 ### Added
 
@@ -109,10 +101,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.4.0] - 2026-06-20
 
-### ⚠️ PATENT PENDING
-
-> This release contains patent-pending technology (shared with WhisperArchive).
-> Unauthorized reproduction, distribution, or public disclosure is prohibited.
 
 ### Added
 
@@ -139,14 +127,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.0] - 2026-06-20
 
-### ⚠️ PATENT PENDING
-
-> This release contains patent-pending technology (shared with WhisperArchive).
-> Unauthorized reproduction, distribution, or public disclosure is prohibited.
 
 ### Added
 
-#### Cross-Modal Verification Core (Patent 1.1)
+#### Cross-Modal Verification Core (Original Algorithm)
 - **New**: `common/modules/cross-modal.js` — CrossModalVerifier with entity extraction + linking
   - 7 entity types: URL, email, phone, date, number, org, person
   - Cross-modal entity linking (exact match)
@@ -187,10 +171,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.0] - 2026-06-20
 
-### ⚠️ PATENT PENDING
-
-> This release contains patent-pending technology (shared with WhisperArchive).
-> Unauthorized reproduction, distribution, or public disclosure is prohibited.
 
 ### Changed
 
@@ -222,7 +202,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Custom (any OpenAI-compatible endpoint)
 
 #### Docker (Simplified)
-- **Removed**: PostgreSQL, Redis, Qdrant, Celery Worker, patent-sync (5 services removed)
+- **Removed**: PostgreSQL, Redis, Qdrant, Celery Worker, sync service (5 services removed)
 - **Kept**: FastAPI (port 61593) + Ollama (port 63257) — 2 services only
 - Cold ports remain in 49152-65535 range
 
@@ -241,7 +221,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `README.md` — Project overview
 - `LICENSE` — AGPL-3.0
 - `CHANGELOG.md` — This file
-- `PATENT_PENDING.md` — Patent notice
+- `PATENT_PENDING.md` — Technology disclosure
 
 #### Project Structure
 - `browser-extension/` — Chrome / Edge / Firefox extension (skeleton)
@@ -250,7 +230,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Design Decisions
 - Inspired by WhisperArchive
-- Shared patent pool: 5 patents (1.1, 2.2, 3, 4, 5)
+- Shared tech stack: PaddleOCR + faster-whisper + Qwen2.5
 - Shared tech stack: PaddleOCR + faster-whisper + Qwen2.5
 - Shared deployment: Fly NAS
 - Independent repo, version, and main branch
