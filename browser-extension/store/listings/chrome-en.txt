@@ -36,6 +36,14 @@ No payment required! Start with GLM-4-Flash, permanently free:
 • SiliconFlow — 20M free tokens on signup
 • Groq · Moonshot · MiniMax · Yi · Baidu Qianfan — All have free tiers
 
+💎 Paid Models (Higher Accuracy)
+For users with budget or company reimbursement — higher accuracy and faster speed:
+• OpenAI GPT-4o / GPT-4.1 / o3-mini
+• Anthropic Claude Sonnet-4 / Opus-4
+• Google Gemini-2.5-Pro / Flash
+• ByteDance Doubao · Tencent Hunyuan · iFlytek Spark
+• DeepSeek / Qwen / Moonshot / MiniMax / Yi / Baidu Qianfan also offer paid high-accuracy models
+
 🐳 Self-hosted Docker (Advanced)
 If you have a GPU and Docker, run your own AI model on your PC or NAS:
 • Fully private — data never leaves your network

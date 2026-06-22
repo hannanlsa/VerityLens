@@ -36,6 +36,14 @@ VerityLens · 真实透镜
 • 硅基流动 — 注册送2000万token
 • Groq · Moonshot · MiniMax · 零一万物 · 百度千帆 — 均有免费额度
 
+💎 付费模型（更高精度）
+适合有预算或公司报销的用户，精度更高、速度更快：
+• OpenAI GPT-4o / GPT-4.1 / o3-mini
+• Anthropic Claude Sonnet-4 / Opus-4
+• Google Gemini-2.5-Pro / Flash
+• 字节豆包 · 腾讯混元 · 讯飞星火
+• DeepSeek / 通义千问 / Moonshot / MiniMax / 零一万物 / 百度千帆 亦有付费高精度模型
+
 🐳 自建Docker（高级用户）
 如果你有GPU和Docker环境，可以在自己的电脑或NAS上搭建本地AI模型：
 • 完全私有，数据不出你的网络

@@ -173,7 +173,9 @@ const MODEL_REGISTRY = {
       tier: 'free',
       models: [
         { id: 'glm-4-flash', name: 'GLM-4-Flash', free: '永久免费' },
-        { id: 'glm-4-air', name: 'GLM-4-Air', free: '新用户送额度' }
+        { id: 'glm-4-air', name: 'GLM-4-Air', free: '新用户送额度' },
+        { id: 'glm-4-plus', name: 'GLM-4-Plus', free: '', price: '¥50/1M input' },
+        { id: 'glm-4-long', name: 'GLM-4-Long', free: '', price: '¥1/1M input' }
       ],
       signupUrl: 'https://open.bigmodel.cn/'
     },
@@ -183,7 +185,9 @@ const MODEL_REGISTRY = {
       tier: 'free',
       models: [
         { id: 'deepseek-chat', name: 'DeepSeek-V3', free: '注册送500万token' },
-        { id: 'deepseek-reasoner', name: 'DeepSeek-R1', free: '同上' }
+        { id: 'deepseek-reasoner', name: 'DeepSeek-R1', free: '同上' },
+        { id: 'deepseek-chat', name: 'DeepSeek-V3 (付费)', free: '', price: '¥1/1M input' },
+        { id: 'deepseek-reasoner', name: 'DeepSeek-R1 (付费)', free: '', price: '¥4/1M input' }
       ],
       signupUrl: 'https://platform.deepseek.com/'
     },
@@ -193,7 +197,9 @@ const MODEL_REGISTRY = {
       tier: 'free',
       models: [
         { id: 'qwen-turbo', name: 'Qwen-Turbo', free: '新用户100万token' },
-        { id: 'qwen-plus', name: 'Qwen-Plus', free: '新用户送额度' }
+        { id: 'qwen-plus', name: 'Qwen-Plus', free: '新用户送额度' },
+        { id: 'qwen-max', name: 'Qwen-Max', free: '', price: '¥20/1M input' },
+        { id: 'qwen-long', name: 'Qwen-Long', free: '', price: '¥0.5/1M input' }
       ],
       signupUrl: 'https://dashscope.console.aliyun.com/'
     },
@@ -204,7 +210,9 @@ const MODEL_REGISTRY = {
       models: [
         { id: 'Qwen/Qwen2.5-7B-Instruct', name: 'Qwen2.5-7B', free: '注册送2000万token' },
         { id: 'deepseek-ai/DeepSeek-V3', name: 'DeepSeek-V3', free: '同上' },
-        { id: 'meta-llama/Llama-3.3-70B-Instruct', name: 'Llama-3.3-70B', free: '同上' }
+        { id: 'meta-llama/Llama-3.3-70B-Instruct', name: 'Llama-3.3-70B', free: '同上' },
+        { id: 'Qwen/Qwen2.5-72B-Instruct', name: 'Qwen2.5-72B', free: '', price: '¥4.13/1M input' },
+        { id: 'deepseek-ai/DeepSeek-R1', name: 'DeepSeek-R1', free: '', price: '¥4/1M input' }
       ],
       signupUrl: 'https://siliconflow.cn/'
     },
@@ -213,7 +221,9 @@ const MODEL_REGISTRY = {
       baseUrl: 'https://api.groq.com/openai/v1',
       tier: 'free',
       models: [
-        { id: 'llama-3.3-70b-versatile', name: 'Llama-3.3-70B', free: '免费速率限制' }
+        { id: 'llama-3.3-70b-versatile', name: 'Llama-3.3-70B', free: '免费速率限制' },
+        { id: 'llama-3.1-8b-instant', name: 'Llama-3.1-8B', free: '免费速率限制' },
+        { id: 'mixtral-8x7b-32768', name: 'Mixtral-8x7B', free: '免费速率限制' }
       ],
       signupUrl: 'https://console.groq.com/'
     },
@@ -222,7 +232,9 @@ const MODEL_REGISTRY = {
       baseUrl: 'https://api.moonshot.cn/v1',
       tier: 'free',
       models: [
-        { id: 'moonshot-v1-8k', name: 'Moonshot-v1', free: '新用户送额度' }
+        { id: 'moonshot-v1-8k', name: 'Moonshot-v1-8K', free: '新用户送额度' },
+        { id: 'moonshot-v1-32k', name: 'Moonshot-v1-32K', free: '', price: '¥24/1M input' },
+        { id: 'moonshot-v1-128k', name: 'Moonshot-v1-128K', free: '', price: '¥24/1M input' }
       ],
       signupUrl: 'https://platform.moonshot.cn/'
     },
@@ -231,7 +243,9 @@ const MODEL_REGISTRY = {
       baseUrl: 'https://api.minimax.chat/v1',
       tier: 'free',
       models: [
-        { id: 'abab6.5s-chat', name: 'ABAB-6.5s', free: '注册送额度' }
+        { id: 'abab6.5s-chat', name: 'ABAB-6.5s', free: '注册送额度' },
+        { id: 'abab6.5g-chat', name: 'ABAB-6.5G', free: '', price: '¥30/1M input' },
+        { id: 'abab7-chat-preview', name: 'ABAB-7', free: '', price: '¥30/1M input' }
       ],
       signupUrl: 'https://platform.minimaxi.com/'
     },
@@ -240,7 +254,9 @@ const MODEL_REGISTRY = {
       baseUrl: 'https://api.lingyiwanwu.com/v1',
       tier: 'free',
       models: [
-        { id: 'yi-lightning', name: 'Yi-Lightning', free: '注册送额度' }
+        { id: 'yi-lightning', name: 'Yi-Lightning', free: '注册送额度' },
+        { id: 'yi-large', name: 'Yi-Large', free: '', price: '¥20/1M input' },
+        { id: 'yi-vision', name: 'Yi-Vision', free: '', price: '¥6/1M input' }
       ],
       signupUrl: 'https://platform.lingyiwanwu.com/'
     },
@@ -249,7 +265,9 @@ const MODEL_REGISTRY = {
       baseUrl: 'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop',
       tier: 'free',
       models: [
-        { id: 'ernie-lite-8k', name: 'ERNIE-Lite', free: '每月免费额度' }
+        { id: 'ernie-lite-8k', name: 'ERNIE-Lite', free: '每月免费额度' },
+        { id: 'ernie-4.0-8k', name: 'ERNIE-4.0', free: '', price: '¥120/1M input' },
+        { id: 'ernie-4.5-8k', name: 'ERNIE-4.5', free: '', price: '¥60/1M input' }
       ],
       signupUrl: 'https://console.bce.baidu.com/qianfan/'
     },
@@ -259,7 +277,10 @@ const MODEL_REGISTRY = {
       tier: 'paid',
       models: [
         { id: 'gpt-4o-mini', name: 'GPT-4o-mini', free: '', price: '$0.15/1M input' },
-        { id: 'gpt-4o', name: 'GPT-4o', free: '', price: '$2.50/1M input' }
+        { id: 'gpt-4o', name: 'GPT-4o', free: '', price: '$2.50/1M input' },
+        { id: 'gpt-4.1-mini', name: 'GPT-4.1-mini', free: '', price: '$0.40/1M input' },
+        { id: 'gpt-4.1', name: 'GPT-4.1', free: '', price: '$2/1M input' },
+        { id: 'o3-mini', name: 'o3-mini', free: '', price: '$1.10/1M input' }
       ],
       signupUrl: 'https://platform.openai.com/'
     },
@@ -269,7 +290,8 @@ const MODEL_REGISTRY = {
       tier: 'paid',
       models: [
         { id: 'claude-3-5-haiku-20241022', name: 'Claude-3.5-Haiku', free: '', price: '$0.80/1M input' },
-        { id: 'claude-sonnet-4-20250514', name: 'Claude-Sonnet-4', free: '', price: '$3/1M input' }
+        { id: 'claude-sonnet-4-20250514', name: 'Claude-Sonnet-4', free: '', price: '$3/1M input' },
+        { id: 'claude-opus-4-20250514', name: 'Claude-Opus-4', free: '', price: '$15/1M input' }
       ],
       signupUrl: 'https://console.anthropic.com/'
     },
@@ -279,7 +301,8 @@ const MODEL_REGISTRY = {
       tier: 'paid',
       models: [
         { id: 'gemini-2.0-flash', name: 'Gemini-2.0-Flash', free: '', price: '$0.10/1M input' },
-        { id: 'gemini-2.5-pro-preview-06-05', name: 'Gemini-2.5-Pro', free: '', price: '$1.25/1M input' }
+        { id: 'gemini-2.5-pro-preview-06-05', name: 'Gemini-2.5-Pro', free: '', price: '$1.25/1M input' },
+        { id: 'gemini-2.5-flash', name: 'Gemini-2.5-Flash', free: '', price: '$0.15/1M input' }
       ],
       signupUrl: 'https://aistudio.google.com/'
     },
@@ -289,7 +312,8 @@ const MODEL_REGISTRY = {
       tier: 'paid',
       models: [
         { id: 'doubao-1-5-pro-32k-250115', name: 'Doubao-1.5-Pro', free: '', price: '¥0.5/1M input' },
-        { id: 'doubao-1-5-lite-32k-250115', name: 'Doubao-1.5-Lite', free: '', price: '¥0.05/1M input' }
+        { id: 'doubao-1-5-lite-32k-250115', name: 'Doubao-1.5-Lite', free: '', price: '¥0.05/1M input' },
+        { id: 'doubao-1-5-pro-256k-250115', name: 'Doubao-1.5-Pro-256K', free: '', price: '¥5/1M input' }
       ],
       signupUrl: 'https://console.volcengine.com/ark'
     },
@@ -299,7 +323,8 @@ const MODEL_REGISTRY = {
       tier: 'paid',
       models: [
         { id: 'hunyuan-lite', name: '混元-Lite', free: '', price: '¥0.1/1M input' },
-        { id: 'hunyuan-turbos', name: '混元-TurboS', free: '', price: '¥0.8/1M input' }
+        { id: 'hunyuan-turbos', name: '混元-TurboS', free: '', price: '¥0.8/1M input' },
+        { id: 'hunyuan-t1', name: '混元-T1', free: '', price: '¥4/1M input' }
       ],
       signupUrl: 'https://cloud.tencent.com/product/hunyuan'
     },
@@ -309,7 +334,8 @@ const MODEL_REGISTRY = {
       tier: 'paid',
       models: [
         { id: 'generalv3.5', name: 'Spark-4.0-Ultra', free: '', price: '¥0.6/1M input' },
-        { id: '4.0Ultra', name: 'Spark-Max', free: '', price: '¥0.2/1M input' }
+        { id: '4.0Ultra', name: 'Spark-Max', free: '', price: '¥0.2/1M input' },
+        { id: 'generalv3', name: 'Spark-Pro', free: '', price: '¥0.1/1M input' }
       ],
       signupUrl: 'https://xinghuo.xfyun.cn/'
     },
@@ -344,7 +370,7 @@ const MODEL_REGISTRY = {
   },
 
   getPaidProviders() {
-    return this.getAllProviders().filter(p => p.tier === 'paid');
+    return this.getAllProviders().filter(p => p.tier === 'paid' || p.models.some(m => m.price));
   },
 
   getProvidersByTier(tier) {

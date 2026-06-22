@@ -31,6 +31,9 @@ VerityLens · 真实透镜
 🆓 免费AI模型（推荐）
 🌟 智谱GLM-4-Flash 永久免费，零门槛入门！另有 DeepSeek、通义千问、硅基流动、Groq、Moonshot、MiniMax、零一万物、百度千帆，均有免费额度。
 
+💎 付费模型（更高精度）
+OpenAI GPT-4o、Anthropic Claude-4、Google Gemini-2.5-Pro，以及字节豆包、腾讯混元、讯飞星火等。DeepSeek/通义千问/Moonshot等亦有付费高精度模型。
+
 🐳 自建Docker（高级用户）
 有GPU和Docker环境？可在自己的电脑或NAS上搭建本地AI模型，完全私有，数据不出你的网络。支持Ollama + Qwen2.5等开源模型。
 
