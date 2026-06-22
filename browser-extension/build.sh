@@ -21,16 +21,7 @@ cat > "$BUILD_DIR/chrome/manifest.json" << 'EOF'
   "manifest_version": 3,
   "name": "VerityLens",
   "version": "0.6.0",
-  "description": "搜索结果真实性标注助手 · 帮你识别广告、SEO农场和可信内容 · 支持6大搜索引擎",
-  "author": "hannanlsa",
-  "homepage_url": "https://github.com/hannanlsa/VerityLens",
-  "icons": {
-    "16": "icons/icon-16.png",
-    "32": "icons/icon-32.png",
-    "48": "icons/icon-48.png",
-    "128": "icons/icon-128.png"
-  },
-  "action": {
+  "description": "信息可信度标注助手 · 来源大数据AI · 帮你识别广告、SEO农场和可信内容 · 支持6大搜索引擎",
     "default_popup": "popup/popup.html",
     "default_icon": {
       "16": "icons/icon-16.png",
@@ -137,7 +128,7 @@ cat > "$BUILD_DIR/firefox/manifest.json" << 'EOF'
   "manifest_version": 2,
   "name": "VerityLens",
   "version": "0.6.0",
-  "description": "搜索结果真实性标注助手 · 帮你识别广告、SEO农场和可信内容 · 支持6大搜索引擎",
+  "description": "信息可信度标注助手 · 来源大数据AI · 帮你识别广告、SEO农场和可信内容 · 支持6大搜索引擎",
   "author": "hannanlsa",
   "homepage_url": "https://github.com/hannanlsa/VerityLens",
   "icons": {
