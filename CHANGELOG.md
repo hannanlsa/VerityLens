@@ -5,6 +5,60 @@ All notable changes to **VerityLens** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-06-22
+
+### ⚠️ PATENT PENDING
+
+> This release contains patent-pending technology (shared with WhisperArchive).
+> Unauthorized reproduction, distribution, or public disclosure is prohibited.
+
+### Added
+
+#### 双语翻译（核心新功能）
+- **New**: `common/modules/translator.js` — VerityTranslator 翻译核心
+  - 联合国六大工作语言互译：zh/en/fr/es/ru/ar
+  - 方案C批量编号翻译：提取段落 → 编号合并 → 1次API调用 → 映射回DOM
+  - 语言检测：HTML lang属性 + N-gram统计 + 字符集分析
+  - RTL语言支持（阿拉伯文 dir="rtl"）
+  - 翻译缓存 + 增量翻译（MutationObserver监听新内容）
+- **New**: `content/verity-translator.js` — 翻译内容脚本
+  - 自动检测页面语言，非搜索引擎页面自动触发翻译
+  - 右下角 🔄 浮动按钮手动触发
+  - 顶部绿色进度条显示翻译进度
+  - popup 🌐 翻译按钮
+- **New**: 设置页翻译设置（开关 + 目标语言选择6种）
+- 双语对照样式：原文下方灰色斜体 + 绿色左边框
+
+#### 付费模型（兜底）
+- 6家付费提供商：OpenAI · Anthropic Claude · Google Gemini · 字节豆包 · 腾讯混元 · 讯飞星火
+- `tier` 字段区分 free/paid/custom
+- 设置页提供商下拉按 `<optgroup>` 分组：🆓免费 / 💎付费
+- 付费模型列表卡片显示价格
+- `getPaidProviders()` / `getProvidersByTier()` API
+
+#### 调试日志面板
+- 右下角浮动日志面板（搜索引擎页面）
+- 复制按钮一键导出日志
+- popup 🐛 调试按钮触发
+
+#### 搜索引擎选择器修复
+- 百度：`#content_left` 限定范围，排除侧边栏和广告容器
+- `containers` 数组替代单一选择器字符串，去重处理
+- 所有6个搜索引擎选择器更新（更宽泛的fallback选择器）
+
+### Fixed
+- 百度搜索不工作：选择器过时 + 侧边栏干扰
+- SmartRouter.loadConfig 卡死：添加2秒超时 + try/catch降级
+- AbortSignal.timeout 兼容性：改用 AbortController + setTimeout
+- options/popup/welcome.html 缺少 verity-core.js 引用
+- i18n-core.js 未加入 manifest content_scripts
+- 360搜索标注：每条结果独立评分（颜色统一是本地模式正常行为）
+
+### Changed
+- host_permissions 简化为 `<all_urls>`（翻译功能需要全站API访问）
+- manifest description 用户友好化
+- 版本号全量统一为 v0.6.0
+
 ## [0.5.0] - 2026-06-22
 
 ### ⚠️ PATENT PENDING

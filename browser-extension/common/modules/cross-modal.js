@@ -1,5 +1,5 @@
 /**
- * VerityLens · Cross-Modal Verifier · 三元组交叉验证（v0.5.0）
+ * VerityLens · Cross-Modal Verifier · 三元组交叉验证（v0.6.0）
  *
  * 核心专利 1.1：跨模态自校验框架
  * - ASR（语音）+ OCR（屏幕）+ 文本 三元组交叉验证

@@ -1,4 +1,4 @@
-# VerityLens 服务端部署（飞牛 NAS · v0.5.0）
+# VerityLens 服务端部署（飞牛 NAS · v0.6.0）
 #
 # 精简版：2 服务（FastAPI + Ollama）
 # 浏览器插件为主力形态，Docker 为可选本地推理通道

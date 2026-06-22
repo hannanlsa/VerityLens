@@ -1,5 +1,5 @@
 /**
- * VerityLens · Translator Module · 双语翻译核心（v0.5.0）
+ * VerityLens · Translator Module · 双语翻译核心（v0.6.0）
  *
  * 联合国六大工作语言互译：
  * - 中文(zh) · 英文(en) · 法文(fr) · 西文(es) · 俄文(ru) · 阿拉伯文(ar)
@@ -8,7 +8,7 @@
  */
 
 const VerityTranslator = {
-  VERSION: '0.5.0',
+  VERSION: '0.6.0',
 
   LANG_NAMES: {
     zh: '中文',
@@ -23,9 +23,16 @@ const VerityTranslator = {
 
   RTL_LANGS: ['ar'],
 
-  BATCH_SIZE: 15,
-  MAX_CHARS_PER_BATCH: 3000,
+  BATCH_SIZE: 25,
+  MAX_CHARS_PER_BATCH: 6000,
   MIN_PARAGRAPH_LENGTH: 8,
+  PARALLEL_BATCHES: 3,
+
+  _cache: {},
+
+  _cacheKey(text, src, tgt) {
+    return src + '→' + tgt + ':' + text.substring(0, 100);
+  },
 
   detectLanguage(text) {
     if (!text || text.length < 3) return 'unknown';
@@ -198,13 +205,21 @@ ${numberedTexts.join('\n')}`;
     const tgtName = this.LANG_NAMES[targetLang] || targetLang;
 
     const numberedTexts = texts.map((t, i) => `[${i + 1}] ${t}`);
-    const systemPrompt = `你是专业翻译。将以下${srcName}段落翻译为${tgtName}。每段翻译前保留编号[n]，翻译准确自然，保留专业术语原文（括号标注），不添加解释。`;
+    const systemPrompt = `你是专业翻译。将以下${srcName}段落翻译为${tgtName}。
+
+严格格式要求：
+- 每段翻译独占一行
+- 行首格式: [编号] 翻译内容
+- 编号必须与原文一致
+- 翻译准确自然，保留专业术语原文（括号标注）
+- 不要合并或拆分段落
+- 不要添加解释`;
 
     const headers = { 'Content-Type': 'application/json' };
     if (apiKey && apiKey !== 'local') headers['Authorization'] = `Bearer ${apiKey}`;
 
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 30000);
+    const timer = setTimeout(() => controller.abort(), 60000);
 
     const resp = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
@@ -216,7 +231,7 @@ ${numberedTexts.join('\n')}`;
           { role: 'user', content: numberedTexts.join('\n') }
         ],
         temperature: 0.3,
-        max_tokens: 2048
+        max_tokens: 8192
       }),
       signal: controller.signal
     });
@@ -233,11 +248,29 @@ ${numberedTexts.join('\n')}`;
     return this.parseTranslationResponse(content);
   },
 
-  localFallback(paragraphs, sourceLang, targetLang) {
+  parseTranslationResponse(response) {
     const results = {};
-    for (let i = 0; i < paragraphs.length; i++) {
-      results[i + 1] = `[${this.LANG_NAMES[sourceLang] || sourceLang} → ${this.LANG_NAMES[targetLang] || targetLang} 需要云端翻译]`;
+    if (!response) return results;
+
+    const matches = response.matchAll(/\[(\d+)\]\s*([\s\S]*?)(?=\[\d+\]|$)/g);
+    for (const match of matches) {
+      const num = parseInt(match[1]);
+      const text = match[2].trim();
+      if (num > 0 && text) {
+        results[num] = text;
+      }
     }
+
+    if (Object.keys(results).length === 0) {
+      const lines = response.split('\n').filter(l => l.trim());
+      for (const line of lines) {
+        const m = line.match(/^\[(\d+)\]\s*(.+)/);
+        if (m) {
+          results[parseInt(m[1])] = m[2].trim();
+        }
+      }
+    }
+
     return results;
   },
 
@@ -268,26 +301,57 @@ ${numberedTexts.join('\n')}`;
     const paragraphs = this.extractParagraphs();
     if (paragraphs.length === 0) return { translated: 0, total: 0 };
 
-    const batches = this.createBatches(paragraphs, sourceLang);
+    const untranslateable = paragraphs.filter(p => !p.dataset.verityTranslated);
+    if (untranslateable.length === 0) return { translated: 0, total: paragraphs.length };
+
+    const batches = this.createBatches(untranslateable, sourceLang);
     let translatedCount = 0;
 
-    for (let batchIdx = 0; batchIdx < batches.length; batchIdx++) {
-      const batch = batches[batchIdx];
+    const processBatch = async (batch, batchIdx) => {
       const texts = batch.map(p => p.textContent.trim());
 
-      let translations = {};
+      const translations = {};
+      const toTranslate = [];
+      const toTranslateIndices = [];
 
-      try {
-        if (config.apiKey && config.apiProvider) {
-          translations = await this.translateViaAPI(
-            texts, sourceLang, targetLang,
-            config.apiProvider, config.apiKey, config.apiModel
-          );
+      for (let i = 0; i < texts.length; i++) {
+        const key = this._cacheKey(texts[i], sourceLang, targetLang);
+        if (this._cache[key]) {
+          translations[i + 1] = this._cache[key];
         } else {
-          translations = this.localFallback(batch, sourceLang, targetLang);
+          toTranslate.push(texts[i]);
+          toTranslateIndices.push(i);
         }
-      } catch (err) {
-        translations = this.localFallback(batch, sourceLang, targetLang);
+      }
+
+      if (toTranslate.length > 0) {
+        let apiResults = {};
+        try {
+          if (config.apiKey && config.apiProvider) {
+            apiResults = await this.translateViaAPI(
+              toTranslate, sourceLang, targetLang,
+              config.apiProvider, config.apiKey, config.apiModel
+            );
+          } else {
+            for (let j = 0; j < toTranslate.length; j++) {
+              apiResults[j + 1] = `[${this.LANG_NAMES[sourceLang] || sourceLang} → ${this.LANG_NAMES[targetLang] || targetLang} 需要云端翻译]`;
+            }
+          }
+        } catch {
+          for (let j = 0; j < toTranslate.length; j++) {
+            apiResults[j + 1] = `[翻译失败，请重试]`;
+          }
+        }
+
+        for (let j = 0; j < toTranslate.length; j++) {
+          const translated = apiResults[j + 1];
+          const origIdx = toTranslateIndices[j] + 1;
+          if (translated) {
+            translations[origIdx] = translated;
+            const key = this._cacheKey(toTranslate[j], sourceLang, targetLang);
+            this._cache[key] = translated;
+          }
+        }
       }
 
       for (let i = 0; i < batch.length; i++) {
@@ -301,18 +365,23 @@ ${numberedTexts.join('\n')}`;
       if (onProgress) {
         onProgress({
           translated: translatedCount,
-          total: paragraphs.length,
+          total: untranslateable.length,
           batch: batchIdx + 1,
           totalBatches: batches.length
         });
       }
+    };
 
-      if (batchIdx < batches.length - 1) {
-        await new Promise(r => setTimeout(r, 500));
+    for (let i = 0; i < batches.length; i += this.PARALLEL_BATCHES) {
+      const chunk = batches.slice(i, i + this.PARALLEL_BATCHES);
+      await Promise.all(chunk.map((batch, idx) => processBatch(batch, i + idx)));
+
+      if (i + this.PARALLEL_BATCHES < batches.length) {
+        await new Promise(r => setTimeout(r, 200));
       }
     }
 
-    return { translated: translatedCount, total: paragraphs.length };
+    return { translated: translatedCount, total: untranslateable.length };
   }
 };
 

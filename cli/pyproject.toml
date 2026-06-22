@@ -1,6 +1,6 @@
 [project]
 name = "verity-lens-cli"
-version = "0.5.0"
+version = "0.6.0"
 description = "VerityLens CLI · 真实透镜命令行工具"
 requires-python = ">=3.10"
 dependencies = [

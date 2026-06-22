@@ -58,10 +58,10 @@ function suite(name) {
 }
 
 (async () => {
-  console.log('\x1b[1mVerityLens Test Suite v0.5.0 (Node.js)\x1b[0m\n');
+  console.log('\x1b[1mVerityLens Test Suite v0.6.0 (Node.js)\x1b[0m\n');
 
   suite('VerityCore · 基础属性');
-  test('VERSION 应为 0.5.0', () => assertEqual(VerityCore.VERSION, '0.5.0'));
+  test('VERSION 应为 0.6.0', () => assertEqual(VerityCore.VERSION, '0.6.0'));
   test('5 级置信度常量完整', () => {
     assertEqual(VerityCore.CONFIDENCE.HIGH, 'high');
     assertEqual(VerityCore.CONFIDENCE.MEDIUM, 'medium');

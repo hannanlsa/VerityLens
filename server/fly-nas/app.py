@@ -1,4 +1,4 @@
-"""VerityLens API Server · OpenAI 兼容接口代理 v0.5.0"""
+"""VerityLens API Server · OpenAI 兼容接口代理 v0.6.0"""
 
 import os
 import re
@@ -16,7 +16,7 @@ logger = logging.getLogger("verity-lens")
 
 app = FastAPI(
     title="VerityLens API",
-    version="0.5.0",
+    version="0.6.0",
     description="VerityLens · 真实透镜 · OpenAI 兼容接口代理",
 )
 
@@ -114,7 +114,7 @@ def text_heuristic(text: str) -> dict:
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "version": "0.5.0"}
+    return {"status": "ok", "version": "0.6.0"}
 
 
 @app.get("/v1/models")

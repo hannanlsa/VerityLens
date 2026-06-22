@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VerityLens · 真实透镜
 // @namespace    veritylens
-// @version      0.5.0
+// @version      0.6.0
 // @description  🛡️ 跨模态自校验 × 反虚假信息助手 · 双通道智能路由 + 三元组交叉验证
 // @author       hannanlsa
 // @homepage     https://github.com/hannanlsa/VerityLens
@@ -37,7 +37,7 @@
   if (window.__verityLensInjected) return;
   window.__verityLensInjected = true;
 
-  const VERSION = '0.5.0';
+  const VERSION = '0.6.0';
 
   const CONFIDENCE = {
     HIGH: 'high', MEDIUM: 'medium', ABNORMAL: 'abnormal',

@@ -1,5 +1,5 @@
 /**
- * VerityLens · Content Script · 搜索结果真实性标注（v0.5.0）
+ * VerityLens · Content Script · 搜索结果真实性标注（v0.6.0）
  *
  * 双通道智能路由 + 跨模态自校验 + 调试日志面板
  */

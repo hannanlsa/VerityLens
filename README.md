@@ -4,7 +4,7 @@
 > A cross-modal fact-checking assistant for the post-truth era.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
-[![Status: v0.5.0](https://img.shields.io/badge/Status-v0.5.0-green)](CHANGELOG.md)
+[![Status: v0.6.0](https://img.shields.io/badge/Status-v0.6.0-green)](CHANGELOG.md)
 [![Patent: Pending](https://img.shields.io/badge/Patent-Pending-red)](PATENT_PENDING.md)
 
 ## ✨ 项目定位
@@ -154,19 +154,19 @@ VerityLens 与 WhisperArchive 共享 **5 件专利**：
 | 仓库名 | hannanlsa/VerityLens |
 | 可见性 | 🔒 PRIVATE（暂未公开） |
 | 协议 | AGPL-3.0 |
-| 状态 | v0.5.0（i18n + 桌面助手Rust后端 + Docker FastAPI） |
+| 状态 | v0.6.0（i18n + 桌面助手Rust后端 + Docker FastAPI） |
 | 创始人 | hannanlsa |
 | 灵感来源 | WhisperArchive |
 
 ## 🗓️ 版本计划
 
-### v0.5.0（当前）
+### v0.6.0（当前）
 - ✅ i18n 国际化（中文/英文，65个翻译键）
 - ✅ 浏览器插件图标 + 内容样式补齐
 - ✅ 桌面助手 Rust 后端（verify_text + verify_cloud 命令）
 - ✅ Docker FastAPI 服务端（OpenAI 兼容代理 + 原生验证端点）
 - ✅ 油猴脚本升级至9家LLM全量支持
-- ✅ 全模块版本号统一为 v0.5.0
+- ✅ 全模块版本号统一为 v0.6.0
 
 ### v0.4.0
 - ✅ 桌面助手（Tauri，macOS/Windows/Linux，< 10MB）

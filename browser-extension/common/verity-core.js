@@ -1,5 +1,5 @@
 /**
- * VerityLens · Cross-Modal Verifier Core（v0.5.0）
+ * VerityLens · Cross-Modal Verifier Core（v0.6.0）
  *
  * 双通道智能路由 + 跨模态自校验：
  * - 本地通道：关键词匹配 + 正则规则 + Tesseract.js OCR + WebSpeech ASR + 三元组交叉验证
@@ -12,7 +12,7 @@
  */
 
 const VerityCore = {
-  VERSION: '0.5.0',
+  VERSION: '0.6.0',
   DEBUG: false,
 
   CONFIDENCE: {

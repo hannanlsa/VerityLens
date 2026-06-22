@@ -1,5 +1,5 @@
 /**
- * VerityLens · OCR Module · Tesseract.js（v0.5.0）
+ * VerityLens · OCR Module · Tesseract.js（v0.6.0）
  *
  * 浏览器端 OCR，基于 Tesseract.js WASM
  * 支持：中英文混合识别、区域截图、置信度评分

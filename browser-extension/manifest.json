@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "VerityLens",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "搜索结果真实性标注助手 · 帮你识别广告、SEO农场和可信内容 · 支持6大搜索引擎",
   "author": "hannanlsa",
   "homepage_url": "https://github.com/hannanlsa/VerityLens",

@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>VerityLens · Test Suite v0.5.0</title>
+  <title>VerityLens · Test Suite v0.6.0</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Cascadia Code', 'Fira Code', monospace; background: #0f172a; color: #e2e8f0; padding: 20px; }
@@ -23,7 +23,7 @@
 </head>
 <body>
   <div id="progress" style="width:0%"></div>
-  <h1>VerityLens Test Suite v0.5.0</h1>
+  <h1>VerityLens Test Suite v0.6.0</h1>
   <div class="summary" id="summary">Running...</div>
   <div id="results"></div>
 
@@ -116,8 +116,8 @@
     const { suite, test, skip, assert, assertEqual, assertApprox, assertIncludes } = TestRunner;
 
     suite('VerityCore · 基础属性', () => {
-      test('VERSION 应为 0.5.0', () => {
-        assertEqual(VerityCore.VERSION, '0.5.0');
+      test('VERSION 应为 0.6.0', () => {
+        assertEqual(VerityCore.VERSION, '0.6.0');
       });
 
       test('5 级置信度常量完整', () => {

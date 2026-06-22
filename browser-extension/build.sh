@@ -1,11 +1,11 @@
 #!/bin/bash
 # VerityLens 浏览器插件三平台打包脚本
-# 输出：dist/verity-lens-{chrome,edge,firefox}-v0.5.0.zip
+# 输出：dist/verity-lens-{chrome,edge,firefox}-v0.6.0.zip
 
 set -e
 cd "$(dirname "$0")"
 
-VERSION="0.5.0"
+VERSION="0.6.0"
 BUILD_DIR="build"
 DIST_DIR="dist"
 
@@ -20,7 +20,7 @@ cat > "$BUILD_DIR/chrome/manifest.json" << 'EOF'
 {
   "manifest_version": 3,
   "name": "VerityLens",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "搜索结果真实性标注助手 · 帮你识别广告、SEO农场和可信内容 · 支持6大搜索引擎",
   "author": "hannanlsa",
   "homepage_url": "https://github.com/hannanlsa/VerityLens",
@@ -116,7 +116,7 @@ cat > "$BUILD_DIR/edge/manifest.edge.json" << 'EOF'
 {
   "packageName": "VerityLens",
   "name": "VerityLens · 真实透镜",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "developer": {
     "name": "hannanlsa",
     "websiteUrl": "https://github.com/hannanlsa/VerityLens"
@@ -136,7 +136,7 @@ cat > "$BUILD_DIR/firefox/manifest.json" << 'EOF'
 {
   "manifest_version": 2,
   "name": "VerityLens",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "搜索结果真实性标注助手 · 帮你识别广告、SEO农场和可信内容 · 支持6大搜索引擎",
   "author": "hannanlsa",
   "homepage_url": "https://github.com/hannanlsa/VerityLens",
