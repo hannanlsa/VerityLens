@@ -4,7 +4,7 @@
 > A credibility annotation assistant powered by big data AI.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
-[![Status: v0.6.0](https://img.shields.io/badge/Status-v0.6.0-green)](CHANGELOG.md)
+[![Status: v0.7.0](https://img.shields.io/badge/Status-v0.7.0-green)](CHANGELOG.md)
 
 
 ## ✨ 项目定位

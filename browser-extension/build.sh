@@ -5,7 +5,7 @@
 set -e
 cd "$(dirname "$0")"
 
-VERSION="0.6.0"
+VERSION="0.7.0"
 BUILD_DIR="build"
 DIST_DIR="dist"
 
@@ -107,7 +107,7 @@ cat > "$BUILD_DIR/edge/manifest.edge.json" << 'EOF'
 {
   "packageName": "VerityLens",
   "name": "VerityLens · 真实透镜",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "developer": {
     "name": "hannanlsa",
     "websiteUrl": "https://github.com/hannanlsa/VerityLens"
@@ -127,8 +127,8 @@ cat > "$BUILD_DIR/firefox/manifest.json" << 'EOF'
 {
   "manifest_version": 2,
   "name": "VerityLens",
-  "version": "0.6.0",
-  "description": "信息可信度标注助手 · 来源大数据AI · 帮你识别广告、SEO农场和可信内容 · 支持6大搜索引擎",
+  "version": "0.7.0",
+  "description": "信息可信度标注助手 · AI驱动识别广告与SEO农场 · 跨模态自校验 · 支持主流搜索引擎",
   "author": "hannanlsa",
   "homepage_url": "https://github.com/hannanlsa/VerityLens",
   "icons": {

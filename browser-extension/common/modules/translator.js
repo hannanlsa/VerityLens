@@ -1,5 +1,5 @@
 /**
- * VerityLens · Translator Module · 双语翻译核心（v0.6.1）
+ * VerityLens · Translator Module · 双语翻译核心（v0.7.0）
  *
  * 联合国六大工作语言互译：
  * - 中文(zh) · 英文(en) · 法文(fr) · 西文(es) · 俄文(ru) · 阿拉伯文(ar)
@@ -8,7 +8,7 @@
  */
 
 const VerityTranslator = {
-  VERSION: '0.6.1',
+  VERSION: '0.7.0',
 
   LANG_NAMES: {
     zh: '中文',

@@ -5,6 +5,26 @@ All notable changes to **VerityLens** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-06-26
+
+### ⚠️ PATENT PENDING
+
+> This release contains patent-pending technology (shared with WhisperArchive).
+> Unauthorized reproduction, distribution, or public disclosure is prohibited.
+
+### Fixed
+
+#### Chrome Web Store Rejection Fix (Yellow Argon)
+- **Fixed**: Removed keyword stuffing from extension description
+  - Removed specific search engine names (Baidu, 360, Sogou, Google, Bing, DuckDuckGo) from description
+  - Removed specific LLM provider names (DeepSeek, Tongyi Qianwen, Moonshot, etc.) from description
+  - Changed to generic descriptions: "支持主流搜索引擎" and "多家LLM提供商"
+- **Updated**: `manifest.json` description → "信息可信度标注助手 · AI驱动识别广告与SEO农场 · 跨模态自校验 · 支持主流搜索引擎"
+- **Updated**: `build.sh` inline manifests for Chrome/Edge/Firefox
+
+### Changed
+- All version numbers bumped to 0.7.0 across all files
+
 ## [0.6.0] - 2026-06-22
 
 

@@ -1,10 +1,10 @@
 /**
- * VerityLens · Cross-Modal Verifier Core（v0.6.0）
+ * VerityLens · Cross-Modal Verifier Core（v0.7.0）
  *
  * 双通道智能路由 + 跨模态自校验：
- * - 本地通道：关键词匹配 + 正则规则 + Tesseract.js OCR + WebSpeech ASR + 三元组交叉验证
- * - 云端通道：DeepSeek / 智谱GLM / 通义千问 / 硅基流动 / Groq 等（用户自填Key）
- * - Docker通道：用户自建 Ollama（OpenAI兼容接口）
+ * - 本地通道：关键词匹配 + 正则规则 + OCR + ASR + 三元组交叉验证
+ * - 云端通道：多家LLM提供商（用户自填Key）
+ * - Docker通道：用户自建推理服务（OpenAI兼容接口）
  * - 智能路由：轻量→本地，复杂→云端，自动选最快可用模型
  * - 跨模态：ASR + OCR + 文本三元组交叉验证（原创算法）
  *
@@ -12,7 +12,7 @@
  */
 
 const VerityCore = {
-  VERSION: '0.6.0',
+  VERSION: '0.7.0',
   DEBUG: false,
 
   CONFIDENCE: {

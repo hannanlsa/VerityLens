@@ -1,5 +1,5 @@
 /**
- * VerityLens · ASR Module · Web Speech API（v0.6.0）
+ * VerityLens · ASR Module · Web Speech API（v0.7.0）
  *
  * 浏览器端语音识别
  * 支持：实时语音转文字、音频文件转写（需云端）、置信度评分
