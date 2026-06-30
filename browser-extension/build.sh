@@ -5,7 +5,7 @@
 set -e
 cd "$(dirname "$0")"
 
-VERSION="0.7.0"
+VERSION="0.7.1"
 BUILD_DIR="build"
 DIST_DIR="dist"
 
@@ -75,7 +75,7 @@ cat > "$BUILD_DIR/chrome/manifest.json" << 'EOF'
   "permissions": [
     "storage",
     "activeTab",
-    "scripting",
+
     "contextMenus"
   ],
   "host_permissions": [

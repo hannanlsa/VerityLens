@@ -12,7 +12,7 @@
  */
 
 const VerityCore = {
-  VERSION: '0.7.0',
+  VERSION: '0.7.1',
   DEBUG: false,
 
   CONFIDENCE: {
